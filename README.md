@@ -17,7 +17,7 @@ nativecli new <project-name>
 ```
 
 ## Documentation & Command References
-For more detailed documentation, visit [NativeCLI Documentation](https://nativecli.com).
+For more detailed documentation, visit [NativeCLI Documentation](https://docs.nativecli.com).
 
 ## Sponsor
 We welcome sponsorships which help us to continue providine Free & Open-Source software and tools to you!
