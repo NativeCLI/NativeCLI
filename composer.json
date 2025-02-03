@@ -1,5 +1,5 @@
 {
-    "name": "petebishwhip/native-cli",
+    "name": "nativecli/nativecli",
     "description": "CLI helper for NativePHP Projects",
     "require": {
         "guzzlehttp/guzzle": "^7.9",
