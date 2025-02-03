@@ -1,6 +1,6 @@
 <?php
 
-namespace Petebishwhip\NativePhpCli;
+namespace NativeCLI;
 
 use Exception as BaseException;
 

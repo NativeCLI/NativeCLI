@@ -21,12 +21,12 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Petebishwhip\\NativePhpCli\\": "src/"
+            "NativeCLI\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Petebishwhip\\NativePhpCli\\Tests\\": "tests/"
+            "NativeCLI\\Tests\\": "tests/"
         }
     },
     "authors": [

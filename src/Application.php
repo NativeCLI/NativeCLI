@@ -1,10 +1,10 @@
 <?php
 
-namespace Petebishwhip\NativePhpCli;
+namespace NativeCLI;
 
-use Petebishwhip\NativePhpCli\Command\CheckNativePHPUpdatesCommand;
-use Petebishwhip\NativePhpCli\Command\ClearCacheCommand;
-use Petebishwhip\NativePhpCli\Command\UpdateNativePHPCommand;
+use NativeCLI\Command\CheckNativePHPUpdatesCommand;
+use NativeCLI\Command\ClearCacheCommand;
+use NativeCLI\Command\UpdateNativePHPCommand;
 
 final class Application extends \Symfony\Component\Console\Application
 {

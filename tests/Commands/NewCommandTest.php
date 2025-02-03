@@ -1,9 +1,9 @@
 <?php
 
-namespace Petebishwhip\NativePhpCli\Tests\Commands;
+namespace NativeCLI\Tests\Commands;
 
-use Petebishwhip\NativePhpCli\Application;
-use Petebishwhip\NativePhpCli\Command\NewCommand;
+use NativeCLI\Application;
+use NativeCLI\Command\NewCommand;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;

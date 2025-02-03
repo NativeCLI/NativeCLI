@@ -1,8 +1,8 @@
 <?php
 
-namespace Petebishwhip\NativePhpCli;
+namespace NativeCLI;
 
-use Petebishwhip\NativePhpCli\Traits\PackageVersionRetrieverTrait;
+use NativeCLI\Traits\PackageVersionRetrieverTrait;
 use z4kn4fein\SemVer\Version as SemanticVersion;
 
 class Version

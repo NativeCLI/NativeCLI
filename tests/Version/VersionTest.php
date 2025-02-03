@@ -1,10 +1,10 @@
 <?php
 
-namespace Petebishwhip\NativePhpCli\Tests\Version;
+namespace NativeCLI\Tests\Version;
 
-use Petebishwhip\NativePhpCli\Exception;
-use Petebishwhip\NativePhpCli\NativePHP;
-use Petebishwhip\NativePhpCli\Version;
+use NativeCLI\Exception;
+use NativeCLI\NativePHP;
+use NativeCLI\Version;
 use PHPUnit\Framework\TestCase;
 use z4kn4fein\SemVer\Version as SemanticVersion;
 

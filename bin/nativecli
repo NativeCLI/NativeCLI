@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-use Petebishwhip\NativePhpCli\Application;
+use NativeCLI\Application;
 
 ini_set('error_reporting', E_ALL);
 ini_set('display_errors', '1');

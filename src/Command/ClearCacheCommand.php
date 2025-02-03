@@ -1,8 +1,8 @@
 <?php
 
-namespace Petebishwhip\NativePhpCli\Command;
+namespace NativeCLI\Command;
 
-use Petebishwhip\NativePhpCli\Cache;
+use NativeCLI\Cache;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;

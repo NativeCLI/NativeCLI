@@ -1,8 +1,8 @@
 <?php
 
-namespace Petebishwhip\NativePhpCli;
+namespace NativeCLI;
 
-use Petebishwhip\NativePhpCli\Traits\PackageVersionRetrieverTrait;
+use NativeCLI\Traits\PackageVersionRetrieverTrait;
 
 class NativePHP
 {

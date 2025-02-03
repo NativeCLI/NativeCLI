@@ -1,8 +1,8 @@
 <?php
 
-namespace Petebishwhip\NativePhpCli\Tests;
+namespace NativeCLI\Tests;
 
-use Petebishwhip\NativePhpCli\Cache;
+use NativeCLI\Cache;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 

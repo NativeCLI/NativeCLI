@@ -1,6 +1,6 @@
 <?php
 
-namespace Petebishwhip\NativePhpCli\Tests;
+namespace NativeCLI\Tests;
 
 use PHPUnit\Framework\TestCase;
 
