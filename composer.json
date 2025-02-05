@@ -1,5 +1,5 @@
 {
-    "name": "petebishwhip/native-cli",
+    "name": "nativecli/nativecli",
     "description": "CLI helper for NativePHP Projects",
     "require": {
         "guzzlehttp/guzzle": "^7.9",
@@ -12,7 +12,8 @@
         "ext-curl": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^11.5"
+        "phpunit/phpunit": "^11.5",
+        "larastan/larastan": "^3.0"
     },
     "bin": [
         "bin/nativecli"
@@ -20,12 +21,12 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Petebishwhip\\NativePhpCli\\": "src/"
+            "NativeCLI\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Petebishwhip\\NativePhpCli\\Tests\\": "tests/"
+            "NativeCLI\\Tests\\": "tests/"
         }
     },
     "authors": [

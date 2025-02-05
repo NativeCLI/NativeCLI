@@ -1,8 +1,8 @@
 <?php
 
-namespace Petebishwhip\NativePhpCli\Exception;
+namespace NativeCLI\Exception;
 
-use Petebishwhip\NativePhpCli\Exception;
+use NativeCLI\Exception;
 
 class RateLimitedException extends Exception
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Petebishwhip\NativePhpCli\Traits;
+namespace NativeCLI\Traits;
 
 use Illuminate\Support\Collection;
 use Petebishwhip\NativePhpCli\Cache;
-use Petebishwhip\NativePhpCli\Exception;
-use Petebishwhip\NativePhpCli\Exception\RateLimitedException;
+use NativeCLI\Exception;
+use NativeCLI\Exception\RateLimitedException;
 use RuntimeException;
 use z4kn4fein\SemVer\Version as SemanticVersion;
 

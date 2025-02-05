@@ -1,10 +1,10 @@
 <?php
 
-namespace Petebishwhip\NativePhpCli\Command;
+namespace NativeCLI\Command;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
-use Petebishwhip\NativePhpCli\Composer;
+use NativeCLI\Composer;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;

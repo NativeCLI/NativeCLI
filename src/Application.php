@@ -1,13 +1,14 @@
 <?php
 
-namespace Petebishwhip\NativePhpCli;
+namespace NativeCLI;
 
-use Petebishwhip\NativePhpCli\Command\CheckNativePHPUpdatesCommand;
-use Petebishwhip\NativePhpCli\Command\ClearCacheCommand;
-use Petebishwhip\NativePhpCli\Command\SelfUpdateCommand;
-use Petebishwhip\NativePhpCli\Command\UpdateNativePHPCommand;
+use NativeCLI\Command\CheckNativePHPUpdatesCommand;
+use NativeCLI\Command\ClearCacheCommand;
+use NativeCLI\Command\NewCommand;
+use NativeCLI\Command\SelfUpdateCommand;
+use NativeCLI\Command\UpdateNativePHPCommand;
 
-class Application extends \Symfony\Component\Console\Application
+final class Application extends \Symfony\Component\Console\Application
 {
     public function __construct()
     {
@@ -18,13 +19,13 @@ class Application extends \Symfony\Component\Console\Application
 
     public static function create(): Application
     {
-        return new static();
+        return new Application();
     }
 
     public function getCommands(): array
     {
        return [
-           new Command\NewCommand(),
+           new NewCommand(),
            new UpdateNativePHPCommand(),
            new CheckNativePHPUpdatesCommand(),
            new ClearCacheCommand(),

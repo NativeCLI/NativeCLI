@@ -1,11 +1,11 @@
 <?php
 
-namespace Petebishwhip\NativePhpCli\Command;
+namespace NativeCLI\Command;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Composer;
-use Petebishwhip\NativePhpCli\Exception\CommandFailed;
-use Petebishwhip\NativePhpCli\NativePHP;
+use NativeCLI\Exception\CommandFailed;
+use NativeCLI\NativePHP;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -57,7 +57,10 @@ class NewCommand extends Command
         try {
             $output->writeln('Creating a new NativePHP project...');
 
-            /** @noinspection PhpPossiblePolymorphicInvocationInspection */
+            /**
+             * @noinspection PhpPossiblePolymorphicInvocationInspection
+             * @phpstan-ignore method.notFound (Relates to getRawTokens only available from ArgvInput.)
+             */
             $process = new Process(['laravel', 'new', ...$input->getRawTokens(true)]);
             $process->setTty(Process::isTtySupported())
                 ->mustRun(function ($type, $buffer) {
