@@ -4,6 +4,7 @@ namespace NativeCLI\Command;
 
 use Illuminate\Filesystem\Filesystem;
 use NativeCLI\Composer;
+use NativeCLI\Exception;
 use NativeCLI\Version;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -31,6 +32,9 @@ class SelfUpdateCommand extends Command
         );
     }
 
+    /**
+     * @throws Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // Get users home directory
@@ -53,11 +57,6 @@ class SelfUpdateCommand extends Command
                 return Command::FAILURE;
             }
         } else {
-            if (!str_contains($version, '-')) {
-                // Assumes a release version
-                // @TODO Implement release version checking
-            }
-
             $availableVersions = Version::getAvailableVersions();
 
             if (!$availableVersions->contains($version)) {

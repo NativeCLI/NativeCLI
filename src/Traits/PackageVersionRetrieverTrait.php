@@ -49,6 +49,9 @@ trait PackageVersionRetrieverTrait
         return SemanticVersion::parseOrNull($latestVersion);
     }
 
+    /**
+     * @throws Exception
+     */
     protected static function getAllAvailableVersions(string $package): Collection
     {
         $cache = new Cache();
