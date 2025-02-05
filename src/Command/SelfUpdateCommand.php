@@ -1,10 +1,10 @@
 <?php
 
-namespace Petebishwhip\NativePhpCli\Command;
+namespace NativeCLI\Command;
 
 use Illuminate\Filesystem\Filesystem;
-use Petebishwhip\NativePhpCli\Composer;
-use Petebishwhip\NativePhpCli\Version;
+use NativeCLI\Composer;
+use NativeCLI\Version;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
