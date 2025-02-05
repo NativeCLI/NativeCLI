@@ -22,7 +22,7 @@ class Version
      */
     public static function getLatestVersion(): ?SemanticVersion
     {
-        return self::getVersionForPackage('petebishwhip/native-cli');
+        return self::getVersionForPackage('nativecli/nativecli');
     }
 
     /**
@@ -30,7 +30,7 @@ class Version
      */
     public static function getAvailableVersions(): Collection
     {
-        return self::getAllAvailableVersions('petebishwhip/native-cli');
+        return self::getAllAvailableVersions('nativecli/nativecli');
     }
 
     public static function isCurrentVersion(SemanticVersion $version): bool

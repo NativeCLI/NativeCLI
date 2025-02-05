@@ -97,7 +97,7 @@ class SelfUpdateCommand extends Command
         $output->writeln('<info>Updating to version ' . $version . '</info>');
 
         $composer = new Composer(new Filesystem(), getcwd());
-        $process = new Process([...$composer->findComposer(), 'global', 'require', 'petebishwhip/native-cli:' . $version]);
+        $process = new Process([...$composer->findComposer(), 'global', 'require', 'nativecli/nativecli:' . $version]);
         $status = $process->run(function ($type, $buffer) use ($output) {
             $output->write($buffer);
         });
