@@ -7,6 +7,7 @@ use NativeCLI\Composer;
 use NativeCLI\Version;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -65,7 +66,7 @@ class SelfUpdateCommand extends Command
                 return Command::FAILURE;
             }
 
-            /** @var SemanticVersion $version */
+            /** @var SemanticVersion|null $version */
             $version = $availableVersions->first(fn(SemanticVersion $v) => $v->isEqual(SemanticVersion::parse($version)));
 
             if ($version === null) {
@@ -81,6 +82,7 @@ class SelfUpdateCommand extends Command
             return Command::SUCCESS;
         }
 
+        /** @var QuestionHelper $questionHelper */
         $questionHelper = $this->getHelper('question');
         $question = new ConfirmationQuestion(
             'Are you sure you want to update to version ' . $version . '? [Y/n]',

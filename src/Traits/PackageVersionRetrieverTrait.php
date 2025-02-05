@@ -3,7 +3,7 @@
 namespace NativeCLI\Traits;
 
 use Illuminate\Support\Collection;
-use Petebishwhip\NativePhpCli\Cache;
+use NativeCLI\Cache;
 use NativeCLI\Exception;
 use NativeCLI\Exception\RateLimitedException;
 use RuntimeException;
