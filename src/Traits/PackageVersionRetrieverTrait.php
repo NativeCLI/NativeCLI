@@ -94,15 +94,31 @@ trait PackageVersionRetrieverTrait
             ->sort($sort);
     }
 
-    private static function makeRequest(string $url): ?string
+    private static function makeRequest(string $url, array $headers = []): ?string
     {
+        $headers = collect($headers);
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'User-Agent: NativeCLI/Updater'
-        ]);
+
+        // If URL includes github.com, check if GITHUB_TOKEN is in the environment
+        if (str_contains($url, 'github.com') && $token = getenv('GITHUB_TOKEN')) {
+            $headers->put('Authorization', 'Bearer ' . $token);
+        }
+
+        // Add User-Agent if doesn't exist:
+        if (!$headers->contains('User-Agent')) {
+            $headers->put('User-Agent', 'NativeCLI/Updater');
+        }
+
+        curl_setopt(
+            $ch,
+            CURLOPT_HTTPHEADER,
+            $headers->map(function ($value, $key) {
+                return $key . ': ' . $value;
+            })->values()->all()
+        );
 
         $response = curl_exec($ch);
 
