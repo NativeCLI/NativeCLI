@@ -61,7 +61,8 @@ class CheckNativePHPUpdatesCommand extends Command
                     $output->writeln(
                         $returnJson
                             ? json_encode(['error' => "Package [$package] is not installed."])
-                            : "<error>Package [$package] is not installed.</error>");
+                            : "<error>Package [$package] is not installed.</error>"
+                    );
                     continue;
                 }
 
@@ -93,7 +94,8 @@ class CheckNativePHPUpdatesCommand extends Command
             $output->writeln(
                 $returnJson
                     ? json_encode(['error' => $e->getMessage()])
-                    : "<error>{$e->getMessage()}</error>");
+                    : "<error>{$e->getMessage()}</error>"
+            );
 
             return Command::FAILURE;
         }

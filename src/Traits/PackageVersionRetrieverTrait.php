@@ -64,8 +64,8 @@ trait PackageVersionRetrieverTrait
         if ($cache->cacheExists($cacheKey)) {
             if (($storedInfo = $cache->retrieveCache($cacheKey, $package)) !== null) {
                 return $storedInfo->mapWithKeys(function ($item) {
-                        return [$item => SemanticVersion::parseOrNull($item)];
-                    })
+                    return [$item => SemanticVersion::parseOrNull($item)];
+                })
                     ->filter()
                     ->sort($sort);
             }

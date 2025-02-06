@@ -24,12 +24,12 @@ final class Application extends \Symfony\Component\Console\Application
 
     public function getCommands(): array
     {
-       return [
-           new NewCommand(),
-           new UpdateNativePHPCommand(),
-           new CheckNativePHPUpdatesCommand(),
-           new ClearCacheCommand(),
-           new SelfUpdateCommand(),
-       ];
+        return [
+            new NewCommand(),
+            new UpdateNativePHPCommand(),
+            new CheckNativePHPUpdatesCommand(),
+            new ClearCacheCommand(),
+            new SelfUpdateCommand(),
+        ];
     }
 }
