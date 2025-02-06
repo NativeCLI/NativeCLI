@@ -66,7 +66,7 @@ class SelfUpdateCommand extends Command
             }
 
             /** @var SemanticVersion|null $version */
-            $version = $availableVersions->first(fn(SemanticVersion $v) => $v->isEqual(SemanticVersion::parse($version)));
+            $version = $availableVersions->first(fn (SemanticVersion $v) => $v->isEqual(SemanticVersion::parse($version)));
 
             if ($version === null) {
                 $output->writeln('<error>Failed to retrieve version ' . $version . '</error>');
