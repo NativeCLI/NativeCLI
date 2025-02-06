@@ -2,6 +2,7 @@
 
 namespace NativeCLI;
 
+use Illuminate\Support\Collection;
 use NativeCLI\Traits\PackageVersionRetrieverTrait;
 use z4kn4fein\SemVer\Version as SemanticVersion;
 
@@ -21,8 +22,19 @@ class Version
      */
     public static function getLatestVersion(): ?SemanticVersion
     {
-        return self::getVersionForPackage('petebishwhip/native-cli');
+        return self::getVersionForPackage('nativecli/nativecli');
     }
 
+    /**
+     * @throws Exception
+     */
+    public static function getAvailableVersions(): Collection
+    {
+        return self::getAllAvailableVersions('nativecli/nativecli');
+    }
 
+    public static function isCurrentVersion(SemanticVersion $version): bool
+    {
+        return $version->isEqual(self::get());
+    }
 }

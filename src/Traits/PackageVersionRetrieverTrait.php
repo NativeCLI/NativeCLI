@@ -3,6 +3,7 @@
 namespace NativeCLI\Traits;
 
 use Illuminate\Support\Collection;
+use NativeCLI\Cache;
 use NativeCLI\Exception;
 use NativeCLI\Exception\RateLimitedException;
 use RuntimeException;
@@ -13,9 +14,8 @@ trait PackageVersionRetrieverTrait
     /**
      * @throws Exception
      * @throws RateLimitedException
-     * @noinspection PhpUnusedParameterInspection
      */
-    public static function getVersionForPackage(string $package, string $tag = 'latest'): ?SemanticVersion
+    protected static function getVersionForPackage(string $package): ?SemanticVersion
     {
         if (self::checkCache($package) !== null) {
             return SemanticVersion::parseOrNull(self::checkCache($package));
@@ -25,21 +25,8 @@ trait PackageVersionRetrieverTrait
             'https://api.github.com/repos/%s/releases/latest',
             $package
         );
-        $ch = curl_init();
 
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'User-Agent: NativeCLI/Updater'
-        ]);
-
-        $response = curl_exec($ch);
-
-        if ($response === false) {
-            throw new Exception('Failed to fetch latest version: ' . curl_error($ch));
-        }
-
-        curl_close($ch);
+        $response = self::makeRequest($url);
 
         $data = json_decode($response, true);
 
@@ -60,6 +47,72 @@ trait PackageVersionRetrieverTrait
         self::cacheVersion($package, $latestVersion);
 
         return SemanticVersion::parseOrNull($latestVersion);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected static function getAllAvailableVersions(string $package): Collection
+    {
+        $cache = new Cache();
+        $cacheKey = 'available_versions';
+        $sort = function (SemanticVersion $a, SemanticVersion $b) {
+            // Sort by semantic version
+            return $a->isGreaterThan($b) ? -1 : 1;
+        };
+
+        if ($cache->cacheExists($cacheKey)) {
+            if (($storedInfo = $cache->retrieveCache($cacheKey, $package)) !== null) {
+                return $storedInfo->mapWithKeys(function ($item) {
+                    return [$item => SemanticVersion::parseOrNull($item)];
+                })
+                    ->filter()
+                    ->sort($sort);
+            }
+        }
+
+        $url = sprintf(
+            'https://api.github.com/repos/%s/releases',
+            $package
+        );
+
+        $response = self::makeRequest($url);
+
+        $data = json_decode($response, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new Exception('Failed to decode latest version');
+        }
+
+        $cache->addToCache($cacheKey, $package, array_column($data, 'tag_name'));
+
+        return collect($data)
+            ->mapWithKeys(function ($release) {
+                return [$release['tag_name'] => SemanticVersion::parseOrNull($release['tag_name'])];
+            })
+            ->filter()
+            ->sort($sort);
+    }
+
+    private static function makeRequest(string $url): ?string
+    {
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'User-Agent: NativeCLI/Updater'
+        ]);
+
+        $response = curl_exec($ch);
+
+        if ($response === false || !is_string($response)) {
+            return null;
+        }
+
+        curl_close($ch);
+
+        return $response;
     }
 
     private static function checkCache(string $package)

@@ -28,7 +28,7 @@ class CacheTest extends TestCase
     public function testRetrieveCacheCommand()
     {
         // Place a file in the cache directory - key: test
-        file_put_contents(ROOT_DIR . '/cache/test_cache.json', json_encode(['test' => 'data']));
+        file_put_contents(ROOT_DIR . '/cache/test_cache.json', json_encode(['test' => 'data', 'expires' => time() + 3600]));
 
         $cache = new Cache();
 
@@ -62,6 +62,9 @@ class CacheTest extends TestCase
     public function testGetAllAvailableCachesCommand()
     {
         $cache = new Cache();
+
+        // Ensure cache directory is empty
+        $cache->clearAllCaches();
 
         // TEST: getAllAvailableCaches returns an empty collection when no cache files exist
         $this->assertEquals([], $cache->getAllAvailableCaches()->toArray());

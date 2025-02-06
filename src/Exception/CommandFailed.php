@@ -6,5 +6,4 @@ use NativeCLI\Exception;
 
 class CommandFailed extends Exception
 {
-
 }

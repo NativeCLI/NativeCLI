@@ -4,6 +4,8 @@ namespace NativeCLI;
 
 use NativeCLI\Command\CheckNativePHPUpdatesCommand;
 use NativeCLI\Command\ClearCacheCommand;
+use NativeCLI\Command\NewCommand;
+use NativeCLI\Command\SelfUpdateCommand;
 use NativeCLI\Command\UpdateNativePHPCommand;
 
 final class Application extends \Symfony\Component\Console\Application
@@ -22,11 +24,12 @@ final class Application extends \Symfony\Component\Console\Application
 
     public function getCommands(): array
     {
-       return [
-           new Command\NewCommand(),
-           new UpdateNativePHPCommand(),
-           new CheckNativePHPUpdatesCommand(),
-           new ClearCacheCommand(),
-       ];
+        return [
+            new NewCommand(),
+            new UpdateNativePHPCommand(),
+            new CheckNativePHPUpdatesCommand(),
+            new ClearCacheCommand(),
+            new SelfUpdateCommand(),
+        ];
     }
 }

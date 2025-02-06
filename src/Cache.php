@@ -19,7 +19,7 @@ class Cache
         return sprintf(self::CACHE_FILENAME_FORMAT, $key);
     }
 
-    public function retrieveCache(string $key): ?Collection
+    public function retrieveCache(string $key, ?string $element = null): ?Collection
     {
         $cacheFile = self::CACHE_DIR . '/' . $this->getCacheFileName($key);
 
@@ -27,7 +27,21 @@ class Cache
             return null;
         }
 
-        return collect(json_decode(file_get_contents($cacheFile), true));
+        $cacheData = collect(json_decode(file_get_contents($cacheFile), true));
+
+        if ($element !== null) {
+            $cacheData = $cacheData->get($element);
+        }
+
+        if ($cacheData === null) {
+            return null;
+        }
+
+        if (!isset($cacheData['expires']) || time() > $cacheData['expires']) {
+            return null;
+        }
+
+        return collect($cacheData)->except('expires');
     }
 
     public function removeCache(string $key): bool
@@ -61,5 +75,23 @@ class Cache
         $caches->each(function ($cache) {
             $this->removeCache($cache);
         });
+    }
+
+    public function addToCache(string $cacheKey, string $key, array $value): void
+    {
+        $cacheFile = self::CACHE_DIR . '/' . $this->getCacheFileName($cacheKey);
+
+        $cacheData = $this->retrieveCache($cacheKey);
+
+        if ($cacheData === null) {
+            $cacheData = collect();
+        }
+
+        $cacheData->put($key, array_merge(['expires' => time() + 3600], $value));
+
+        file_put_contents(
+            $cacheFile,
+            json_encode($cacheData->toArray())
+        );
     }
 }
