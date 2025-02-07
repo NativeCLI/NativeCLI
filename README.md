@@ -7,7 +7,7 @@ NativePHP CLI is a command-line tool to create and manage Laravel projects with 
 To install NativePHP CLI, you need to have PHP and Composer installed on your system.
 
 ```sh
-composer global require nativecli/nativecli:"^1@beta"
+composer global require nativecli/nativecli
 ```
 
 ## Usage
