@@ -19,7 +19,7 @@ class Composer extends \Illuminate\Support\Composer
         return true;
     }
 
-    public function getPackageVersions(array $packages): array
+    public function getPackageVersions(array $packages, bool $throwOnError = true): array
     {
         $composerLockFile = $this->findComposerLockFile();
         $composerLockData = json_decode(file_get_contents($composerLockFile), true);
@@ -38,7 +38,7 @@ class Composer extends \Illuminate\Support\Composer
                 }
             }
 
-            if (!$found) {
+            if (!$found && $throwOnError) {
                 throw new RuntimeException("Package [$package] is not installed.");
             }
         }
@@ -60,5 +60,10 @@ class Composer extends \Illuminate\Support\Composer
         }
 
         return $composerLockFile;
+    }
+
+    public function packageExistsInComposerFile(string $package): bool
+    {
+        return $this->hasPackage($package);
     }
 }

@@ -8,6 +8,11 @@ class NativePHP
 {
     use PackageVersionRetrieverTrait;
     public const NATIVECLI_RECOMMENDED_VERSION_URL = 'https://nativecli.com/resources/latestRecommendedVersion.json';
+    public const NATIVEPHP_PACKAGES = [
+        'nativephp/electron',
+        'nativephp/laravel',
+        'nativephp/ios',
+    ];
 
     /**
      * @throws Exception
@@ -48,7 +53,7 @@ class NativePHP
     {
         return [
             'nativephp/electron' => self::getVersionForPackage('nativephp/electron'),
-            'nativephp/laravel' => self::getVersionForPackage('nativephp/laravel')
+            'nativephp/laravel' => self::getVersionForPackage('nativephp/laravel'),
         ];
     }
 }
