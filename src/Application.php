@@ -2,12 +2,12 @@
 
 namespace NativeCLI;
 
-use Illuminate\Console\Command;
 use NativeCLI\Command\CheckNativePHPUpdatesCommand;
 use NativeCLI\Command\ClearCacheCommand;
 use NativeCLI\Command\NewCommand;
 use NativeCLI\Command\SelfUpdateCommand;
 use NativeCLI\Command\UpdateNativePHPCommand;
+use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -28,6 +28,10 @@ final class Application extends \Symfony\Component\Console\Application
         return new Application();
     }
 
+    /**
+     * @throws ExceptionInterface
+     * @throws \Exception
+     */
     public function run(?InputInterface $input = null, ?OutputInterface $output = null): int
     {
         $input ??= new ArgvInput();
@@ -51,7 +55,7 @@ final class Application extends \Symfony\Component\Console\Application
                 && $jsonOutput['update_available'] === true
             ) {
                 $output->writeln(
-                    '<info>There is a new version of NativePHP available. Run `nativephp self-update` to update.</info>'
+                    '<info>There is a new version of NativePHP available. Run `nativecli self-update` to update.</info>'
                 );
             }
         }
