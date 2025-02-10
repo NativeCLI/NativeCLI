@@ -7,12 +7,12 @@ use NativeCLI\Command\ClearCacheCommand;
 use NativeCLI\Command\NewCommand;
 use NativeCLI\Command\SelfUpdateCommand;
 use NativeCLI\Command\UpdateNativePHPCommand;
-use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
 
 final class Application extends \Symfony\Component\Console\Application
 {
@@ -29,35 +29,38 @@ final class Application extends \Symfony\Component\Console\Application
     }
 
     /**
-     * @throws ExceptionInterface
      * @throws \Exception
      */
     public function run(?InputInterface $input = null, ?OutputInterface $output = null): int
     {
-        $input ??= new ArgvInput();
-        $output ??= new ConsoleOutput();
+        try {
+            $input ??= new ArgvInput();
+            $output ??= new ConsoleOutput();
 
-        if ($input->getFirstArgument() != 'self-update') {
-            $tempInput = new ArgvInput([
-                'self-update',
-                '--check',
-                '--format=json',
-            ]);
+            if ($input->getFirstArgument() != 'self-update') {
+                $tempInput = new ArgvInput([
+                    'self-update',
+                    '--check',
+                    '--format=json',
+                ]);
 
-            $tempOutput = new BufferedOutput();
-            $this->find('self-update')->run($tempInput, $tempOutput);
+                $tempOutput = new BufferedOutput();
+                $this->find('self-update')->run($tempInput, $tempOutput);
 
-            $jsonOutput = json_decode($tempOutput->fetch(), true);
+                $jsonOutput = json_decode($tempOutput->fetch(), true);
 
-            if (
-                json_last_error() === JSON_ERROR_NONE
-                && isset($jsonOutput['update_available'])
-                && $jsonOutput['update_available'] === true
-            ) {
-                $output->writeln(
-                    '<info>There is a new version of NativePHP available. Run `nativecli self-update` to update.</info>'
-                );
+                if (
+                    json_last_error() === JSON_ERROR_NONE
+                    && isset($jsonOutput['update_available'])
+                    && $jsonOutput['update_available'] === true
+                ) {
+                    $output->writeln(
+                        '<info>There is a new version of NativePHP available. Run `nativecli self-update` to update.</info>'
+                    );
+                }
             }
+        } catch (Throwable) {
+            // Continue silently. Allow the command requested to run.
         }
 
         return parent::run($input, $output);
