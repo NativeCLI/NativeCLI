@@ -8,7 +8,8 @@ class RepositoryManager
 {
     public function __construct(
         private Composer $composer
-    ) {}
+    ) {
+    }
 
     /**
      * @throws \JsonException
