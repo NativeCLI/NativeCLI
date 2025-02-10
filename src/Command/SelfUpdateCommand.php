@@ -57,7 +57,8 @@ class SelfUpdateCommand extends Command
         $home = $_SERVER['HOME'] ?? $_SERVER['USERPROFILE'] ?? null;
 
         if ($home === null) {
-            $output->writeln($format === 'json'
+            $output->writeln(
+                $format === 'json'
                 ? json_encode(['error' => 'Failed to determine home directory'])
                 : '<error>Failed to determine home directory</error>'
             );
@@ -103,7 +104,8 @@ class SelfUpdateCommand extends Command
         }
 
         if (Version::isCurrentVersion($version)) {
-            $output->writeln($format === 'json'
+            $output->writeln(
+                $format === 'json'
                 ? json_encode(['update_available' => false])
                 : '<info>Already up to date</info>'
             );
@@ -112,7 +114,8 @@ class SelfUpdateCommand extends Command
         }
 
         if ($input->getOption('check')) {
-            $output->writeln($format === 'json'
+            $output->writeln(
+                $format === 'json'
                 ? json_encode(['update_available' => true, 'version' => (string) $version])
                 : '<info>Update available: ' . $version . '</info>'
             );
@@ -128,7 +131,8 @@ class SelfUpdateCommand extends Command
         );
 
         if (!$questionHelper->ask($input, $output, $question)) {
-            $output->writeln($format === 'json'
+            $output->writeln(
+                $format === 'json'
                 ? json_encode(['error' => 'Update cancelled by user'])
                 : '<error>Update cancelled by user</error>'
             );
@@ -136,7 +140,8 @@ class SelfUpdateCommand extends Command
             return Command::FAILURE;
         }
 
-        $output->writeln($format === 'json'
+        $output->writeln(
+            $format === 'json'
             ? json_encode(['update_available' => true, 'version' => (string) $version])
             : '<info>Updating to version ' . $version . '</info>'
         );
@@ -148,7 +153,8 @@ class SelfUpdateCommand extends Command
         });
 
         if ($status !== Command::SUCCESS) {
-            $output->writeln($format === 'json'
+            $output->writeln(
+                $format === 'json'
                 ? json_encode(['error' => 'Failed to update to version ' . $version])
                 : '<error>Failed to update to version ' . $version . '</error>'
             );
@@ -156,7 +162,8 @@ class SelfUpdateCommand extends Command
             return $status;
         }
 
-        $output->writeln($format === 'json'
+        $output->writeln(
+            $format === 'json'
             ? json_encode(['success' => 'Successfully updated to version ' . $version])
             : '<info>Successfully updated to version ' . $version . '</info>'
         );
