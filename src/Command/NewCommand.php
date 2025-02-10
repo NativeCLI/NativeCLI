@@ -79,7 +79,7 @@ class NewCommand extends Command
 
             $composer = new Composer(new Filesystem(), $filePath);
 
-            if (! $input->getOption('ios')) {
+            if (!$input->getOption('ios')) {
                 $composer->requirePackages(
                     NativePHP::getPackagesForComposer(),
                     false,
