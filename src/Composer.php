@@ -46,6 +46,11 @@ class Composer extends \Illuminate\Support\Composer
         return $versions;
     }
 
+    public function getComposerFile(): string
+    {
+        return $this->findComposerFile();
+    }
+
     protected function findComposerLockFile(): string
     {
         $composerLockFile = "$this->workingPath/composer.lock";
