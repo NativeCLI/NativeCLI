@@ -55,7 +55,10 @@ class NewCommand extends Command
         $this->output = $output;
         $cwd = getcwd();
         $filePath = $cwd . '/' . $input->getArgument('name');
-        // @phpstan-ignore method.notFound (Relates to getRawTokens only available from ArgvInput.)
+        /**
+         * @noinspection PhpPossiblePolymorphicInvocationInspection
+         * @phpstan-ignore method.notFound (Relates to getRawTokens only available from ArgvInput.)
+         */
         $tokens = $input->getRawTokens(true);
 
         if (($key = array_search('--ios', $tokens)) !== false) {

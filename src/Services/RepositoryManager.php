@@ -2,9 +2,10 @@
 
 namespace NativeCLI\Services;
 
+use JsonException;
 use NativeCLI\Composer;
 
-class RepositoryManager
+readonly class RepositoryManager
 {
     public function __construct(
         private Composer $composer
@@ -12,7 +13,7 @@ class RepositoryManager
     }
 
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function addRepository(string $type, string $url): bool
     {
@@ -35,7 +36,7 @@ class RepositoryManager
     }
 
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function repositoryExists(string $type, string $url): bool
     {
