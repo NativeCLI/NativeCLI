@@ -10,7 +10,7 @@ class Version
 {
     use PackageVersionRetrieverTrait;
 
-    public const VERSION = '1.0.0-release.1';
+    public const VERSION = '1.0.1-release.1';
 
     public static function get(): ?SemanticVersion
     {

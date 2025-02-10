@@ -5,6 +5,7 @@ namespace NativeCLI\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 use NativeCLI\Composer;
+use NativeCLI\Exception\CommandFailed;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -110,7 +111,11 @@ class UpdateNativePHPCommand extends Command
 
         $output = new BufferedOutput();
 
-        $this->getApplication()->doRun($checkInput, $output);
+        $status = $this->getApplication()->doRun($checkInput, $output);
+
+        if ($status !== Command::SUCCESS) {
+            throw new CommandFailed($output->fetch());
+        }
 
         return collect(json_decode(trim($output->fetch()), true));
     }

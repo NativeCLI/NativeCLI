@@ -37,6 +37,16 @@ class CheckNativePHPUpdatesCommand extends Command
 
         $composer = new Composer(new Filesystem(), getcwd());
 
+        if ($composer->packageExistsInComposerFile('nativephp/ios')) {
+            $output->writeln(
+                $returnJson
+                    ? json_encode(['error' => 'This command is not available for NativePHP for iOS yet.'])
+                    : '<error>This command is not available for NativePHP for iOS yet.</error>'
+            );
+
+            return Command::FAILURE;
+        }
+
         try {
             // Throws if composer.json is not found.
             if (!$composer->isComposerFilePresent()) {
@@ -45,7 +55,7 @@ class CheckNativePHPUpdatesCommand extends Command
 
             $output->writeln('Checking for updates to NativePHP...', OutputInterface::VERBOSITY_VERBOSE);
 
-            $currentVersions = $composer->getPackageVersions(['nativephp/electron', 'nativephp/laravel']);
+            $currentVersions = $composer->getPackageVersions(['nativephp/electron', 'nativephp/laravel'], false);
             $latestVersions = NativePHP::getLatestVersions();
             $result = [];
 

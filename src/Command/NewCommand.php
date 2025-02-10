@@ -3,9 +3,10 @@
 namespace NativeCLI\Command;
 
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Composer;
+use NativeCLI\Composer;
 use NativeCLI\Exception\CommandFailed;
 use NativeCLI\NativePHP;
+use NativeCLI\Services\RepositoryManager;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -45,7 +46,8 @@ class NewCommand extends Command
             ->addOption('verification', null, InputOption::VALUE_NONE, 'Indicates whether Jetstream should be scaffolded with email verification support')
             ->addOption('pest', null, InputOption::VALUE_NONE, 'Installs the Pest testing framework')
             ->addOption('phpunit', null, InputOption::VALUE_NONE, 'Installs the PHPUnit testing framework')
-            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Forces install even if the directory already exists');
+            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Forces install even if the directory already exists')
+            ->addOption('ios', null, InputOption::VALUE_NONE, 'Install NativePHP for iOS instead of Desktop');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -53,15 +55,20 @@ class NewCommand extends Command
         $this->output = $output;
         $cwd = getcwd();
         $filePath = $cwd . '/' . $input->getArgument('name');
+        /**
+         * @noinspection PhpPossiblePolymorphicInvocationInspection
+         * @phpstan-ignore method.notFound (Relates to getRawTokens only available from ArgvInput.)
+         */
+        $tokens = $input->getRawTokens(true);
+
+        if (($key = array_search('--ios', $tokens)) !== false) {
+            unset($tokens[$key]);
+        }
 
         try {
             $output->writeln('Creating a new NativePHP project...');
 
-            /**
-             * @noinspection PhpPossiblePolymorphicInvocationInspection
-             * @phpstan-ignore method.notFound (Relates to getRawTokens only available from ArgvInput.)
-             */
-            $process = new Process(['laravel', 'new', ...$input->getRawTokens(true)]);
+            $process = new Process(['laravel', 'new', ...$tokens]);
             $process->setTty(Process::isTtySupported())
                 ->mustRun(function ($type, $buffer) {
                     $this->output->write($buffer);
@@ -74,11 +81,22 @@ class NewCommand extends Command
             chdir($input->getArgument('name'));
 
             $composer = new Composer(new Filesystem(), $filePath);
-            $composer->requirePackages(
-                NativePHP::getPackagesForComposer(),
-                false,
-                $output
-            );
+
+            if (!$input->getOption('ios')) {
+                $composer->requirePackages(
+                    NativePHP::getPackagesForComposer(),
+                    false,
+                    $output
+                );
+            } else {
+                $repoMan = new RepositoryManager($composer);
+                $repoMan->addRepository('composer', 'https://nativephp-ios.composer.sh');
+                $composer->requirePackages(
+                    ['nativephp/ios'],
+                    false,
+                    $output
+                );
+            }
 
             // Locate PHP & remove new lines
             $php = trim(Process::fromShellCommandline('which php')->mustRun()->getOutput());
