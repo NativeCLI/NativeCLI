@@ -11,6 +11,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Process\Process;
@@ -30,6 +31,19 @@ class SelfUpdateCommand extends Command
             'The version to update to',
             'latest',
         );
+
+        $this->addOption(
+            'check',
+            null,
+            InputOption::VALUE_NONE,
+            'Check for updates only',
+        )->addOption(
+            'format',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'The format to output the update information in',
+            'text',
+        );
     }
 
     /**
@@ -37,11 +51,16 @@ class SelfUpdateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $format = $input->getOption('format');
+
         // Get users home directory
         $home = $_SERVER['HOME'] ?? $_SERVER['USERPROFILE'] ?? null;
 
         if ($home === null) {
-            $output->writeln('<error>Failed to determine home directory</error>');
+            $output->writeln($format === 'json'
+                ? json_encode(['error' => 'Failed to determine home directory'])
+                : '<error>Failed to determine home directory</error>'
+            );
 
             return Command::FAILURE;
         }
@@ -52,7 +71,9 @@ class SelfUpdateCommand extends Command
             $version = Version::getLatestVersion();
 
             if ($version === null) {
-                $output->writeln('<error>Failed to retrieve latest version</error>');
+                $output->writeln($format === 'json'
+                    ? json_encode(['error' => 'Failed to retrieve latest version'])
+                    : '<error>Failed to retrieve latest version</error>');
 
                 return Command::FAILURE;
             }
@@ -60,7 +81,9 @@ class SelfUpdateCommand extends Command
             $availableVersions = Version::getAvailableVersions();
 
             if (!$availableVersions->contains($version)) {
-                $output->writeln('<error>Version ' . $version . ' is not available</error>');
+                $output->writeln($format === 'json'
+                    ? json_encode(['error' => 'Version ' . $version . ' is not available'])
+                    : '<error>Version ' . $version . ' is not available</error>');
 
                 return Command::FAILURE;
             }
@@ -69,14 +92,30 @@ class SelfUpdateCommand extends Command
             $version = $availableVersions->first(fn (SemanticVersion $v) => $v->isEqual(SemanticVersion::parse($version)));
 
             if ($version === null) {
-                $output->writeln('<error>Failed to retrieve version ' . $version . '</error>');
+                $output->writeln(
+                    $format === 'json'
+                        ? json_encode(['error' => 'Failed to retrieve version ' . $version])
+                        : '<error>Failed to retrieve version ' . $version . '</error>'
+                );
 
                 return Command::FAILURE;
             }
         }
 
         if (Version::isCurrentVersion($version)) {
-            $output->writeln('<info>Already up to date</info>');
+            $output->writeln($format === 'json'
+                ? json_encode(['update_available' => false])
+                : '<info>Already up to date</info>'
+            );
+
+            return Command::SUCCESS;
+        }
+
+        if ($input->getOption('check')) {
+            $output->writeln($format === 'json'
+                ? json_encode(['update_available' => true, 'version' => (string) $version])
+                : '<info>Update available: ' . $version . '</info>'
+            );
 
             return Command::SUCCESS;
         }
@@ -89,12 +128,18 @@ class SelfUpdateCommand extends Command
         );
 
         if (!$questionHelper->ask($input, $output, $question)) {
-            $output->writeln('<error>Update cancelled by user</error>');
+            $output->writeln($format === 'json'
+                ? json_encode(['error' => 'Update cancelled by user'])
+                : '<error>Update cancelled by user</error>'
+            );
 
             return Command::FAILURE;
         }
 
-        $output->writeln('<info>Updating to version ' . $version . '</info>');
+        $output->writeln($format === 'json'
+            ? json_encode(['update_available' => true, 'version' => (string) $version])
+            : '<info>Updating to version ' . $version . '</info>'
+        );
 
         $composer = new Composer(new Filesystem(), getcwd());
         $process = new Process([...$composer->findComposer(), 'global', 'require', 'nativecli/nativecli:' . $version]);
@@ -103,12 +148,18 @@ class SelfUpdateCommand extends Command
         });
 
         if ($status !== Command::SUCCESS) {
-            $output->writeln('<error>Failed to update to version ' . $version . '</error>');
+            $output->writeln($format === 'json'
+                ? json_encode(['error' => 'Failed to update to version ' . $version])
+                : '<error>Failed to update to version ' . $version . '</error>'
+            );
 
             return $status;
         }
 
-        $output->writeln('<info>Successfully updated to version ' . $version . '</info>');
+        $output->writeln($format === 'json'
+            ? json_encode(['success' => 'Successfully updated to version ' . $version])
+            : '<info>Successfully updated to version ' . $version . '</info>'
+        );
 
         return Command::SUCCESS;
     }
