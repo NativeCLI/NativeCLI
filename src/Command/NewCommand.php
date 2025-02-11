@@ -92,9 +92,9 @@ class NewCommand extends Command
                 $repoMan = new RepositoryManager($composer);
                 $repoMan->addRepository('composer', 'https://nativephp-ios.composer.sh');
                 $composer->requirePackages(
-                    ['nativephp/ios'],
-                    false,
-                    $output
+                    packages: ['nativephp/ios'],
+                    output: $output,
+                    tty: Process::isTtySupported()
                 );
             }
 

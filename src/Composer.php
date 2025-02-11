@@ -2,7 +2,10 @@
 
 namespace NativeCLI;
 
+use Closure;
+use Illuminate\Support\Collection;
 use RuntimeException;
+use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 use z4kn4fein\SemVer\Version as SemanticVersion;
 
@@ -65,5 +68,26 @@ class Composer extends \Illuminate\Support\Composer
     public function packageExistsInComposerFile(string $package): bool
     {
         return $this->hasPackage($package);
+    }
+
+    public function requirePackages(array $packages, bool $dev = false, Closure|OutputInterface|null $output = null, $composerBinary = null, bool $tty = false): bool
+    {
+        $command = (new Collection([
+            ...$this->findComposer($composerBinary),
+            'require',
+            ...$packages,
+        ]))
+            ->when($dev, function ($command) {
+                $command->push('--dev');
+            })->all();
+
+        return 0 === $this->getProcess($command, ['COMPOSER_MEMORY_LIMIT' => '-1'])
+                ->setTty($tty)
+                ->run(
+                    $output instanceof OutputInterface
+                        ? function ($type, $line) use ($output) {
+                            $output->write('    ' . $line);
+                        } : $output
+                );
     }
 }
