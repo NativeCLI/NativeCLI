@@ -4,13 +4,38 @@ namespace NativeCLI;
 
 use Closure;
 use Illuminate\Support\Collection;
+use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
 use Throwable;
 use z4kn4fein\SemVer\Version as SemanticVersion;
 
 class Composer extends \Illuminate\Support\Composer
 {
+    public function findGlobalComposerFile(string $file = 'composer.json'): null|string
+    {
+        $globalDirectory = null;
+        $process = new Process(['composer', 'global', 'config', 'home']);
+        // Get response from process to variable
+        $process->run(function ($type, $line) use (&$globalDirectory) {
+            if ($type === Process::ERR) {
+                return;
+            }
+
+            $globalDirectory = trim($line);
+        });
+
+        $globalDirectory = rtrim($globalDirectory, "\n");
+        $globalDirectory .= "/$file";
+
+        if (!file_exists($globalDirectory)) {
+            throw new InvalidArgumentException("Global composer file not found at [$globalDirectory].");
+        }
+
+        return $globalDirectory;
+    }
+
     public function isComposerFilePresent(): bool
     {
         try {
@@ -22,9 +47,9 @@ class Composer extends \Illuminate\Support\Composer
         return true;
     }
 
-    public function getPackageVersions(array $packages, bool $throwOnError = true): array
+    public function getPackageVersions(array $packages, bool $throwOnError = true, ?string $composerLockFile = null): array
     {
-        $composerLockFile = $this->findComposerLockFile();
+        $composerLockFile ??= $this->findComposerLockFile();
         $composerLockData = json_decode(file_get_contents($composerLockFile), true);
 
         $versions = [];
