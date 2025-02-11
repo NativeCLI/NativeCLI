@@ -16,7 +16,7 @@ class Composer extends \Illuminate\Support\Composer
     public function findGlobalComposerFile(string $file = 'composer.json'): null|string
     {
         $globalDirectory = null;
-        $process = new Process(['composer', 'global', 'config', 'home']);
+        $process = new Process(['composer', '-n', 'config', '--global', 'home']);
         // Get response from process to variable
         $process->run(function ($type, $line) use (&$globalDirectory) {
             if ($type === Process::ERR) {
