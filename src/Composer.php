@@ -86,8 +86,8 @@ class Composer extends \Illuminate\Support\Composer
                 ->run(
                     $output instanceof OutputInterface
                         ? function ($type, $line) use ($output) {
-                        $output->write('    '.$line);
-                    } : $output
+                            $output->write('    ' . $line);
+                        } : $output
                 );
     }
 }
