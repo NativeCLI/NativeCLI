@@ -2,6 +2,7 @@
 
 namespace NativeCLI;
 
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 use NativeCLI\Traits\PackageVersionRetrieverTrait;
 use z4kn4fein\SemVer\Version as SemanticVersion;
@@ -10,11 +11,15 @@ class Version
 {
     use PackageVersionRetrieverTrait;
 
-    public const VERSION = '1.0.1-release.1';
-
     public static function get(): ?SemanticVersion
     {
-        return SemanticVersion::parseOrNull(self::VERSION);
+        $composer = new Composer(new Filesystem());
+
+        return $composer->getPackageVersions(
+            packages: ['nativecli/nativecli'],
+            throwOnError: false,
+            composerLockFile: $composer->findGlobalComposerFile('composer.lock')
+        )['nativecli/nativecli'] ?? null;
     }
 
     /**
