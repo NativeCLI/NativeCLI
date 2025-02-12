@@ -3,6 +3,7 @@
 namespace NativeCLI\Command;
 
 use Illuminate\Filesystem\Filesystem;
+use JsonException;
 use NativeCLI\Composer;
 use NativeCLI\Services\RepositoryManager;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -18,7 +19,7 @@ use Symfony\Component\Process\Process;
 class InstallNativePHPMobileCommand extends Command
 {
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
