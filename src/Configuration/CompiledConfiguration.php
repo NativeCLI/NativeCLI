@@ -5,7 +5,7 @@ namespace NativeCLI\Configuration;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
-class CompiledConfiguration
+final readonly class CompiledConfiguration
 {
     private array $config;
 
