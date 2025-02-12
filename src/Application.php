@@ -38,7 +38,9 @@ final class Application extends \Symfony\Component\Console\Application
             $input ??= new ArgvInput();
             $output ??= new ConsoleOutput();
 
-            if ($input->getFirstArgument() != 'self-update') {
+            $config = Configuration::compiled();
+
+            if ($input->getFirstArgument() != 'self-update' && $config->get('updates.check')) {
                 $tempInput = new ArgvInput([
                     'self-update',
                     '--check',

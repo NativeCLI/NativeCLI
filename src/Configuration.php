@@ -5,6 +5,7 @@ namespace NativeCLI;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
+use NativeCLI\Configuration\CompiledConfiguration;
 
 final class Configuration
 {
@@ -37,6 +38,12 @@ final class Configuration
 
     public function set(string $key, mixed $value): Configuration
     {
+        if ($value === 'true') {
+            $value = true;
+        } elseif ($value === 'false') {
+            $value = false;
+        }
+
         Arr::set($this->config, $key, $value);
 
         return $this;
@@ -64,6 +71,17 @@ final class Configuration
         return new Configuration(
             new Filesystem(),
             getcwd()
+        );
+    }
+
+    /**
+     * @throws FileNotFoundException
+     */
+    public static function compiled(): CompiledConfiguration
+    {
+        return new CompiledConfiguration(
+            self::global()->get(),
+            self::local()->get()
         );
     }
 
