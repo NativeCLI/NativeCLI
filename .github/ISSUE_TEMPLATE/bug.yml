@@ -7,13 +7,11 @@ body:
       value: |
         We're sorry to hear you have a problem.
 
-        Before submitting your report, please make sure you've been through the section "[Debugging](https://nativephp.com/docs/getting-started/debugging)" in the docs.
+        Before submitting your report, please make sure you've been through the [Documentation](https://docs.nativecli.com).
 
         If nothing here has helped you, please provide as much useful context as you can here to help us solve help you.
 
         Note that reams and reams of logs isn't helpful - please share only relevant errors.
-
-        If possible, please prepare a reproduction repo and link to it in the Notes field.
   - type: textarea
     id: what-doing
     attributes:
@@ -27,7 +25,7 @@ body:
     attributes:
       label: What happened?
       description: What did you expect to happen?
-      placeholder: I cannot currently do X thing because when I do, it breaks X thing.
+      placeholder: I cannot currently run X because when I do, it throws X error.
     validations:
       required: true
   - type: textarea
