@@ -35,7 +35,6 @@ class Composer extends \Illuminate\Support\Composer
 
     public function findGlobalComposerFile(string $file = 'composer.json'): null|string
     {
-
         $filePath = "{$this->findGlobalComposerHomeDirectory()}/$file";
 
         if (!file_exists($filePath)) {
