@@ -4,6 +4,7 @@ namespace NativeCLI;
 
 use NativeCLI\Command\CheckNativePHPUpdatesCommand;
 use NativeCLI\Command\ClearCacheCommand;
+use NativeCLI\Command\ConfigurationCommand;
 use NativeCLI\Command\NewCommand;
 use NativeCLI\Command\SelfUpdateCommand;
 use NativeCLI\Command\UpdateNativePHPCommand;
@@ -11,21 +12,23 @@ use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
 use Throwable;
 
 final class Application extends \Symfony\Component\Console\Application
 {
-    public function __construct()
+    public function __construct(private readonly ?string $filePath = null)
     {
         parent::__construct('NativePHP CLI Tool', Version::get());
 
         $this->addCommands($this->getCommands());
     }
 
-    public static function create(): Application
+    public static function create(?string $file = null): Application
     {
-        return new Application();
+        return new Application($file);
     }
 
     /**
@@ -37,7 +40,9 @@ final class Application extends \Symfony\Component\Console\Application
             $input ??= new ArgvInput();
             $output ??= new ConsoleOutput();
 
-            if ($input->getFirstArgument() != 'self-update') {
+            $config = Configuration::compiled();
+
+            if ($input->getFirstArgument() != 'self-update' && $config->get('updates.check')) {
                 $tempInput = new ArgvInput([
                     'self-update',
                     '--check',
@@ -54,9 +59,29 @@ final class Application extends \Symfony\Component\Console\Application
                     && isset($jsonOutput['update_available'])
                     && $jsonOutput['update_available'] === true
                 ) {
-                    $output->writeln(
-                        '<info>There is a new version of NativePHP available. Run `nativecli self-update` to update.</info>'
-                    );
+                    if ($config->get('updates.auto')) {
+                        $output->writeln('<info>Updating NativeCLI...</info>');
+                        $tempInput = (new ArgvInput(['self-update']));
+                        $tempInput->setInteractive(false);
+                        $updateCode = $this->find('self-update')->run($tempInput, new NullOutput());
+                        if ($updateCode === 0) {
+                            $output->writeln('<info>NativePHP has been updated.</info>');
+
+                            // To appease the QA/CI Bots, lets ensure that we have an ArgvInput
+                            if ($input instanceof ArgvInput) {
+                                Process::fromShellCommandline($this->filePath . ' ' . implode(' ', $input->getRawTokens()))
+                                    ->run(function ($type, $buffer) use ($output) {
+                                        $output->write($buffer);
+                                    });
+                            } else {
+                                $output->writeln('<error>Failed to re-run command. Please go ahead and try again.</error>');
+                            }
+                        }
+                    } else {
+                        $output->writeln(
+                            '<info>There is a new version of NativePHP available. Run `nativecli self-update` to update.</info>'
+                        );
+                    }
                 }
             }
         } catch (Throwable) {
@@ -69,11 +94,12 @@ final class Application extends \Symfony\Component\Console\Application
     public function getCommands(): array
     {
         return [
-            new NewCommand(),
-            new UpdateNativePHPCommand(),
             new CheckNativePHPUpdatesCommand(),
             new ClearCacheCommand(),
+            new ConfigurationCommand(),
+            new NewCommand(),
             new SelfUpdateCommand(),
+            new UpdateNativePHPCommand(),
         ];
     }
 }

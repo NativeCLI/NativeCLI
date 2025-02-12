@@ -6,7 +6,7 @@
         "symfony/console": "^7.2",
         "symfony/process": "^7.2",
         "laravel/installer": "^5.11",
-        "illuminate/support": "^11.41",
+        "illuminate/support": "^11.42.0",
         "illuminate/filesystem": "^11.41",
         "z4kn4fein/php-semver": "^3.0",
         "ext-curl": "*"

@@ -2,4 +2,5 @@
 vendor
 cache/*
 .phpunit.cache
+.nativecli.json
 test-dir
