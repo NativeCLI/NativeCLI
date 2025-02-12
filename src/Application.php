@@ -12,7 +12,9 @@ use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
 use Throwable;
 
 final class Application extends \Symfony\Component\Console\Application
@@ -60,6 +62,27 @@ final class Application extends \Symfony\Component\Console\Application
                     $output->writeln(
                         '<info>There is a new version of NativePHP available. Run `nativecli self-update` to update.</info>'
                     );
+
+                    if ($config->get('updates.auto')) {
+                        $output->writeln('<info>Updating NativeCLI...</info>');
+                        $updateCode = $this->find('self-update')->run(new ArgvInput(['self-update']), new NullOutput());
+                        if ($updateCode === 0) {
+                            $output->writeln('<info>NativePHP has been updated.</info>');
+
+                            $process = (new Process([
+                                'sh $([ -f sail ] && echo sail || echo vendor/bin/sail)',
+                                ...$input->getRawTokens()
+                            ]))->mustRun(function ($type, $buffer) use ($output) {
+                                if ($type === Process::ERR) {
+                                    $output->write('<error>' . $buffer . '</error>');
+                                } else {
+                                    $output->write($buffer);
+                                }
+                            });
+
+                            return $process->getExitCode();
+                        }
+                    }
                 }
             }
         } catch (Throwable) {
