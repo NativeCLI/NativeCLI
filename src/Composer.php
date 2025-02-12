@@ -13,7 +13,7 @@ use z4kn4fein\SemVer\Version as SemanticVersion;
 
 class Composer extends \Illuminate\Support\Composer
 {
-    public function findGlobalComposerHomeDirectory()
+    public function findGlobalComposerHomeDirectory(): string
     {
         $globalDirectory = null;
         $process = new Process(['composer', '-n', 'config', '--global', 'home']);

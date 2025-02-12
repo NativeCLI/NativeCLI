@@ -19,16 +19,16 @@ use Throwable;
 
 final class Application extends \Symfony\Component\Console\Application
 {
-    public function __construct()
+    public function __construct(private readonly ?string $filePath = null)
     {
         parent::__construct('NativePHP CLI Tool', Version::get());
 
         $this->addCommands($this->getCommands());
     }
 
-    public static function create(): Application
+    public static function create(?string $file = null): Application
     {
-        return new Application();
+        return new Application($file);
     }
 
     /**
@@ -59,29 +59,28 @@ final class Application extends \Symfony\Component\Console\Application
                     && isset($jsonOutput['update_available'])
                     && $jsonOutput['update_available'] === true
                 ) {
-                    $output->writeln(
-                        '<info>There is a new version of NativePHP available. Run `nativecli self-update` to update.</info>'
-                    );
-
                     if ($config->get('updates.auto')) {
                         $output->writeln('<info>Updating NativeCLI...</info>');
-                        $updateCode = $this->find('self-update')->run(new ArgvInput(['self-update']), new NullOutput());
+                        $tempInput = (new ArgvInput(['self-update']));
+                        $tempInput->setInteractive(false);
+                        $updateCode = $this->find('self-update')->run($tempInput, new NullOutput());
                         if ($updateCode === 0) {
                             $output->writeln('<info>NativePHP has been updated.</info>');
 
-                            $process = (new Process([
-                                'sh $([ -f sail ] && echo sail || echo vendor/bin/sail)',
-                                ...$input->getRawTokens()
-                            ]))->mustRun(function ($type, $buffer) use ($output) {
-                                if ($type === Process::ERR) {
-                                    $output->write('<error>' . $buffer . '</error>');
-                                } else {
-                                    $output->write($buffer);
-                                }
-                            });
-
-                            return $process->getExitCode();
+                            // To appease the QA/CI Bots, lets ensure that we have an ArgvInput
+                            if ($input instanceof ArgvInput) {
+                                Process::fromShellCommandline($this->filePath . ' ' . implode(' ', $input->getRawTokens()))
+                                    ->run(function ($type, $buffer) use ($output) {
+                                        $output->write($buffer);
+                                    });
+                            } else {
+                                $output->writeln('<error>Failed to re-run command. Please go ahead and try again.</error>');
+                            }
                         }
+                    } else {
+                        $output->writeln(
+                            '<info>There is a new version of NativePHP available. Run `nativecli self-update` to update.</info>'
+                        );
                     }
                 }
             }

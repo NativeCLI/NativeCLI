@@ -2,7 +2,6 @@
 
 namespace NativeCLI\Command;
 
-use Illuminate\Filesystem\Filesystem;
 use NativeCLI\Configuration;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

@@ -26,4 +26,4 @@ if (isset($_SERVER['HOME'])) {
 define('NATIVECLI_HOME_PATH', $home_path .'/.nativephp');
 
 /** @noinspection PhpUnhandledExceptionInspection */
-Application::create()->run();
+Application::create(__FILE__)->run();

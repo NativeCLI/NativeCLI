@@ -6,6 +6,7 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
 use NativeCLI\Configuration\CompiledConfiguration;
+use RuntimeException;
 
 final class Configuration
 {
@@ -90,7 +91,7 @@ final class Configuration
         $this->filesystem->ensureDirectoryExists($this->workingPath);
 
         if ($this->filesystem->exists($this->getFilePath())) {
-            throw new \RuntimeException('Configuration file already exists');
+            throw new RuntimeException('Configuration file already exists');
         }
 
         $this->filesystem->put($this->getFilePath(), json_encode($this->getDefaultConfiguration(), JSON_PRETTY_PRINT));
