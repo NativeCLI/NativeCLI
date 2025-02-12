@@ -17,7 +17,7 @@ final class Configuration
      */
     public function __construct(
         private readonly Filesystem $filesystem,
-        private ?string             $workingPath = null,
+        private ?string $workingPath = null,
     ) {
         if ($this->workingPath === null) {
             $this->workingPath = getcwd();
