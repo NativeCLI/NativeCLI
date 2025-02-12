@@ -13,7 +13,7 @@ use z4kn4fein\SemVer\Version as SemanticVersion;
 
 class Composer extends \Illuminate\Support\Composer
 {
-    public function findGlobalComposerFile(string $file = 'composer.json'): null|string
+    public function findGlobalComposerHomeDirectory()
     {
         $globalDirectory = null;
         $process = new Process(['composer', '-n', 'config', '--global', 'home']);
@@ -26,14 +26,23 @@ class Composer extends \Illuminate\Support\Composer
             $globalDirectory = trim($line);
         });
 
-        $globalDirectory = rtrim($globalDirectory, "\n");
-        $globalDirectory .= "/$file";
-
-        if (!file_exists($globalDirectory)) {
-            throw new InvalidArgumentException("Global composer file not found at [$globalDirectory].");
+        if ($globalDirectory === null) {
+            throw new RuntimeException('Unable to determine global composer home directory.');
         }
 
-        return $globalDirectory;
+        return rtrim($globalDirectory, "\n");
+    }
+
+    public function findGlobalComposerFile(string $file = 'composer.json'): null|string
+    {
+
+        $filePath = "{$this->findGlobalComposerHomeDirectory()}/$file";
+
+        if (!file_exists($filePath)) {
+            throw new InvalidArgumentException("Global composer file not found at [$filePath].");
+        }
+
+        return $filePath;
     }
 
     public function isComposerFilePresent(): bool
