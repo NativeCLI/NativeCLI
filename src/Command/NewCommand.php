@@ -81,9 +81,9 @@ class NewCommand extends Command
 
             if (!$input->getOption('ios')) {
                 $composer->requirePackages(
-                    NativePHP::getPackagesForComposer(),
-                    false,
-                    $output
+                    packages: ['nativephp/electron'],
+                    output: $output,
+                    tty: Process::isTtySupported()
                 );
             } else {
                 $repoMan = new RepositoryManager($composer);

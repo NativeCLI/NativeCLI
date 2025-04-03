@@ -26,24 +26,4 @@ class VersionTest extends TestCase
             'Current version is less than latest release.'
         );
     }
-
-    public function testNativePHPRecommendedVersionsCanBeRetrieved()
-    {
-        $packages = NativePHP::getPackagesForComposer();
-
-        $this->assertIsArray($packages);
-        $this->assertNotEmpty($packages);
-
-        // Validate 2 keys
-        $this->assertCount(2, $packages);
-
-        // Get packages
-        $retrievedPackages = array_map(function ($package) {
-            return explode(':', $package)[0];
-        }, $packages);
-
-        // Validate packages
-        $this->assertContains('nativephp/electron', $retrievedPackages);
-        $this->assertContains('nativephp/laravel', $retrievedPackages);
-    }
 }
