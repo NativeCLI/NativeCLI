@@ -5,6 +5,7 @@ namespace NativeCLI;
 use NativeCLI\Command\CheckNativePHPUpdatesCommand;
 use NativeCLI\Command\ClearCacheCommand;
 use NativeCLI\Command\ConfigurationCommand;
+use NativeCLI\Command\FixInertiaForMobileCommand;
 use NativeCLI\Command\InstallNativePHPMobileCommand;
 use NativeCLI\Command\NewCommand;
 use NativeCLI\Command\SelfUpdateCommand;
@@ -98,6 +99,7 @@ final class Application extends \Symfony\Component\Console\Application
             new CheckNativePHPUpdatesCommand(),
             new ClearCacheCommand(),
             new ConfigurationCommand(),
+            new FixInertiaForMobileCommand(),
             new InstallNativePHPMobileCommand(),
             new NewCommand(),
             new SelfUpdateCommand(),

@@ -36,7 +36,7 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
-      - name: PHPStan/Larastan Static Analysis
+      - name: PHPStan Static Analysis
         run: ./vendor/bin/phpstan analyse
 
       - name: Run test suite
