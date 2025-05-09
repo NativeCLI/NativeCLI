@@ -13,7 +13,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^11.5",
-        "larastan/larastan": "^3.0"
+        "larastan/larastan": "^3.0",
+        "laravel/helpers": "^1.7"
     },
     "bin": [
         "bin/nativecli"
