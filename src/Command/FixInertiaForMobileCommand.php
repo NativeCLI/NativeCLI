@@ -56,7 +56,7 @@ class FixInertiaForMobileCommand extends Command
             '@inertiajs/svelte',
         ];
 
-        $foundPackages = array_filter($packagesToCheck, fn($pkg) => isset($packageJson['dependencies'][$pkg]));
+        $foundPackages = array_filter($packagesToCheck, fn ($pkg) => isset($packageJson['dependencies'][$pkg]));
 
         if (empty($foundPackages)) {
             $output->writeln('<info>No Inertia.js packages found in package.json.</info>');
