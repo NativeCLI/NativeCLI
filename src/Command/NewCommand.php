@@ -44,7 +44,7 @@ class NewCommand extends Command
             ->addOption('npm', null, InputOption::VALUE_NONE, 'Install and build NPM dependencies')
             ->addOption('using', null, InputOption::VALUE_OPTIONAL, 'Install a custom starter kit from a community maintained package')
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Forces install even if the directory already exists')
-            ->addOption('ios', null, InputOption::VALUE_NONE, 'Install NativePHP for iOS instead of Desktop');
+            ->addOption('mobile', null, InputOption::VALUE_NONE, 'Install NativePHP for Mobile instead of Desktop');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -58,7 +58,7 @@ class NewCommand extends Command
          */
         $tokens = $input->getRawTokens(true);
 
-        if (($key = array_search('--ios', $tokens)) !== false) {
+        if (($key = array_search('--mobile', $tokens)) !== false) {
             unset($tokens[$key]);
         }
 
@@ -79,7 +79,7 @@ class NewCommand extends Command
 
             $composer = new Composer(new Filesystem(), $filePath);
 
-            if (!$input->getOption('ios')) {
+            if (!$input->getOption('mobile')) {
                 $composer->requirePackages(
                     packages: ['nativephp/electron'],
                     output: $output,
@@ -87,9 +87,9 @@ class NewCommand extends Command
                 );
             } else {
                 $repoMan = new RepositoryManager($composer);
-                $repoMan->addRepository('composer', 'https://nativephp-ios.composer.sh');
+                $repoMan->addRepository('composer', 'https://nativephp.composer.sh');
                 $composer->requirePackages(
-                    packages: ['nativephp/ios'],
+                    packages: ['nativephp/mobile'],
                     output: $output,
                     tty: Process::isTtySupported()
                 );
