@@ -13,8 +13,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 
 #[AsCommand(
-    name: 'ios:install',
-    description: 'Install the NativePHP Mobile CLI tool'
+    name: 'mobile:install',
+    description: 'Install the NativePHP for Mobile in an existing Laravel application.'
 )]
 class InstallNativePHPMobileCommand extends Command
 {
@@ -27,9 +27,9 @@ class InstallNativePHPMobileCommand extends Command
 
         $composer = new Composer(new Filesystem(), getcwd());
         $repoMan = new RepositoryManager($composer);
-        $repoMan->addRepository('composer', 'https://nativephp-ios.composer.sh');
+        $repoMan->addRepository('composer', 'https://nativephp.composer.sh');
         $composerInstallSuccessful = $composer->requirePackages(
-            packages: ['nativephp/ios'],
+            packages: ['nativephp/mobile'],
             output: $output,
             tty: Process::isTtySupported()
         );
@@ -42,7 +42,7 @@ class InstallNativePHPMobileCommand extends Command
 
         $php = trim(Process::fromShellCommandline('which php')->mustRun()->getOutput());
 
-        $output->writeln('Installing NativePHP for iOS');
+        $output->writeln('Installing NativePHP for Mobile...');
 
         $nativePhpInstall = new Process([$php, 'artisan', 'native:install', '--no-interaction']);
         $nativePhpInstall->setTty(Process::isTtySupported())
