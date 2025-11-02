@@ -16,6 +16,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 use Throwable;
 
+use function Laravel\Prompts\confirm;
+
 #[AsCommand(
     name: 'new',
     description: 'Create a new Laravel project with NativePHP',
@@ -108,9 +110,25 @@ class NewCommand extends Command
                     $this->output->write($buffer);
                 });
 
-            $nativePhpInstall->isSuccessful()
-                ? $output->writeln('<info>🚀 NativePHP installed successfully. Go forth and make great apps!</info>')
-                : throw new CommandFailed('NativePHP installation failed.');
+            if (! $nativePhpInstall->isSuccessful()) {
+                throw new CommandFailed('NativePHP installation failed.');
+            }
+
+            $output->writeln('<info>🚀 NativePHP installed successfully. Go forth and make great apps!</info>');
+
+            if (confirm(
+                'Would you like to start your new NativePHP project now?',
+                true,
+            )) {
+                $output->writeln('<info>Starting your NativePHP application...</info>');
+
+                $startProcess = new Process([$php, 'artisan', 'native:run']);
+                $startProcess->setTimeout(null)
+                    ->setTty(Process::isTtySupported())
+                    ->mustRun(function ($type, $buffer) {
+                        $this->output->write($buffer);
+                    });
+            }
         } catch (CommandFailed $e) {
             $output->writeln('<error>'.$e->getMessage().'</error>');
 
