@@ -9,8 +9,7 @@ readonly class RepositoryManager
 {
     public function __construct(
         private Composer $composer
-    ) {
-    }
+    ) {}
 
     /**
      * @throws JsonException
@@ -25,7 +24,7 @@ readonly class RepositoryManager
             function (array $composerFile) use ($type, $url) {
                 $composerFile['repositories'][] = [
                     'type' => $type,
-                    'url' => $url
+                    'url' => $url,
                 ];
 
                 return $composerFile;

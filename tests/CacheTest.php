@@ -8,12 +8,12 @@ use PHPUnit\Framework\TestCase;
 
 class CacheTest extends TestCase
 {
-    public function testCacheExistsCommand()
+    public function test_cache_exists_command()
     {
         // Place a file in the cache directory - key: test
-        touch(ROOT_DIR . '/cache/test_cache.json');
+        touch(ROOT_DIR.'/cache/test_cache.json');
 
-        $cache = new Cache();
+        $cache = new Cache;
 
         // TEST: cacheExists returns false when a file does not exist
         $this->assertFalse($cache->cacheExists('non_existent'));
@@ -22,15 +22,15 @@ class CacheTest extends TestCase
         $this->assertTrue($cache->cacheExists('test'));
 
         // CLEANUP: Remove the test cache file
-        unlink(ROOT_DIR . '/cache/test_cache.json');
+        unlink(ROOT_DIR.'/cache/test_cache.json');
     }
 
-    public function testRetrieveCacheCommand()
+    public function test_retrieve_cache_command()
     {
         // Place a file in the cache directory - key: test
-        file_put_contents(ROOT_DIR . '/cache/test_cache.json', json_encode(['test' => 'data', 'expires' => time() + 3600]));
+        file_put_contents(ROOT_DIR.'/cache/test_cache.json', json_encode(['test' => 'data', 'expires' => time() + 3600]));
 
-        $cache = new Cache();
+        $cache = new Cache;
 
         // TEST: retrieveCache returns null when a file does not exist
         $this->assertNull($cache->retrieveCache('non_existent'));
@@ -39,15 +39,15 @@ class CacheTest extends TestCase
         $this->assertEquals(['test' => 'data'], $cache->retrieveCache('test')->toArray());
 
         // CLEANUP: Remove the test cache file
-        unlink(ROOT_DIR . '/cache/test_cache.json');
+        unlink(ROOT_DIR.'/cache/test_cache.json');
     }
 
-    public function testRemoveCacheCommand()
+    public function test_remove_cache_command()
     {
         // Place a file in the cache directory - key: test
-        touch(ROOT_DIR . '/cache/test_cache.json');
+        touch(ROOT_DIR.'/cache/test_cache.json');
 
-        $cache = new Cache();
+        $cache = new Cache;
 
         // TEST: removeCache returns false when a file does not exist
         $this->assertFalse($cache->removeCache('non_existent'));
@@ -56,12 +56,12 @@ class CacheTest extends TestCase
         $this->assertTrue($cache->removeCache('test'));
 
         // TEST: The cache file has been removed
-        $this->assertFalse(file_exists(ROOT_DIR . '/cache/test_cache.json'));
+        $this->assertFalse(file_exists(ROOT_DIR.'/cache/test_cache.json'));
     }
 
-    public function testGetAllAvailableCachesCommand()
+    public function test_get_all_available_caches_command()
     {
-        $cache = new Cache();
+        $cache = new Cache;
 
         // Ensure cache directory is empty
         $cache->clearAllCaches();
@@ -70,27 +70,27 @@ class CacheTest extends TestCase
         $this->assertEquals([], $cache->getAllAvailableCaches()->toArray());
 
         // Place a file in the cache directory - key: test
-        touch(ROOT_DIR . '/cache/test_cache.json');
+        touch(ROOT_DIR.'/cache/test_cache.json');
 
         // TEST: getAllAvailableCaches returns a collection of cache keys
         $this->assertEquals(['test'], $cache->getAllAvailableCaches()->toArray());
 
         // CLEANUP: Remove the test cache file
-        unlink(ROOT_DIR . '/cache/test_cache.json');
+        unlink(ROOT_DIR.'/cache/test_cache.json');
     }
 
     /**
      * @return void
      */
     #[Depends('testGetAllAvailableCachesCommand')]
-    public function testClearAllCachesCommand()
+    public function test_clear_all_caches_command()
     {
         // Place a file in the cache directory - key: test{1,2,3}
-        touch(ROOT_DIR . '/cache/test1_cache.json');
-        touch(ROOT_DIR . '/cache/test2_cache.json');
-        touch(ROOT_DIR . '/cache/test3_cache.json');
+        touch(ROOT_DIR.'/cache/test1_cache.json');
+        touch(ROOT_DIR.'/cache/test2_cache.json');
+        touch(ROOT_DIR.'/cache/test3_cache.json');
 
-        $cache = new Cache();
+        $cache = new Cache;
 
         // TEST: clearAllCaches removes all cache files
         $cache->clearAllCaches();

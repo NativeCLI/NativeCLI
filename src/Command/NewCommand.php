@@ -51,9 +51,10 @@ class NewCommand extends Command
     {
         $this->output = $output;
         $cwd = getcwd();
-        $filePath = $cwd . '/' . $input->getArgument('name');
+        $filePath = $cwd.'/'.$input->getArgument('name');
         /**
          * @noinspection PhpPossiblePolymorphicInvocationInspection
+         *
          * @phpstan-ignore method.notFound (Relates to getRawTokens only available from ArgvInput.)
          */
         $tokens = $input->getRawTokens(true);
@@ -78,9 +79,9 @@ class NewCommand extends Command
 
             chdir($input->getArgument('name'));
 
-            $composer = new Composer(new Filesystem(), $filePath);
+            $composer = new Composer(new Filesystem, $filePath);
 
-            if (!$input->getOption('mobile')) {
+            if (! $input->getOption('mobile')) {
                 $composer->requirePackages(
                     packages: ['nativephp/electron'],
                     output: $output,
@@ -110,11 +111,11 @@ class NewCommand extends Command
                 ? $output->writeln('<info>🚀 NativePHP installed successfully. Go forth and make great apps!</info>')
                 : throw new CommandFailed('NativePHP installation failed.');
         } catch (CommandFailed $e) {
-            $output->writeln('<error>' . $e->getMessage() . '</error>');
+            $output->writeln('<error>'.$e->getMessage().'</error>');
 
             return Command::FAILURE;
         } catch (Throwable $e) {
-            $output->writeln('<error>' . $e->getMessage() . '</error>');
+            $output->writeln('<error>'.$e->getMessage().'</error>');
 
             return Command::FAILURE;
         }
@@ -124,8 +125,6 @@ class NewCommand extends Command
 
     /**
      * Return the local machine's default Git branch if set or default to `main`.
-     *
-     * @return string
      */
     protected function defaultBranch(): string
     {

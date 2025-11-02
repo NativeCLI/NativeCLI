@@ -10,7 +10,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class NewCommandTest extends TestCase
 {
-    public function testNewCommandIsCallable()
+    public function test_new_command_is_callable()
     {
         $newCommandMock = $this->getMockBuilder(NewCommand::class)
             ->setConstructorArgs(['new'])
@@ -18,7 +18,7 @@ class NewCommandTest extends TestCase
             ->getMock();
         $newCommandMock->method('execute')->willReturn(Command::SUCCESS);
 
-        $app = new Application();
+        $app = new Application;
         $app->add($newCommandMock);
 
         $command = $app->find('new');

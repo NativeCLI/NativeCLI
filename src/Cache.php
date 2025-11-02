@@ -6,12 +6,13 @@ use Illuminate\Support\Collection;
 
 class Cache
 {
-    public const CACHE_DIR = __DIR__ . '/../cache';
+    public const CACHE_DIR = __DIR__.'/../cache';
+
     public const CACHE_FILENAME_FORMAT = '%s_cache.json';
 
     public function cacheExists(string $cache): bool
     {
-        return file_exists(self::CACHE_DIR . '/' . $this->getCacheFileName($cache));
+        return file_exists(self::CACHE_DIR.'/'.$this->getCacheFileName($cache));
     }
 
     private function getCacheFileName(string $key): string
@@ -21,9 +22,9 @@ class Cache
 
     public function retrieveCache(string $key, ?string $element = null): ?Collection
     {
-        $cacheFile = self::CACHE_DIR . '/' . $this->getCacheFileName($key);
+        $cacheFile = self::CACHE_DIR.'/'.$this->getCacheFileName($key);
 
-        if (!$this->cacheExists($key)) {
+        if (! $this->cacheExists($key)) {
             return null;
         }
 
@@ -37,7 +38,7 @@ class Cache
             return null;
         }
 
-        if (!isset($cacheData['expires']) || time() > $cacheData['expires']) {
+        if (! isset($cacheData['expires']) || time() > $cacheData['expires']) {
             return null;
         }
 
@@ -46,7 +47,7 @@ class Cache
 
     public function removeCache(string $key): bool
     {
-        $cacheFile = self::CACHE_DIR . '/' . $this->getCacheFileName($key);
+        $cacheFile = self::CACHE_DIR.'/'.$this->getCacheFileName($key);
 
         if ($this->cacheExists($key)) {
             return unlink($cacheFile);
@@ -79,7 +80,7 @@ class Cache
 
     public function addToCache(string $cacheKey, string $key, array $value): void
     {
-        $cacheFile = self::CACHE_DIR . '/' . $this->getCacheFileName($cacheKey);
+        $cacheFile = self::CACHE_DIR.'/'.$this->getCacheFileName($cacheKey);
 
         $cacheData = $this->retrieveCache($cacheKey);
 

@@ -14,9 +14,10 @@ class UpdateCommandTest extends TestCase
 {
     /**
      * @throws Throwable
+     *
      * @TODO Break out the updater to be more testable.
      */
-    public function testCheckUpdateCommandCanExecute()
+    public function test_check_update_command_can_execute()
     {
         $commandMock = $this->getMockBuilder(CheckNativePHPUpdatesCommand::class)
             ->setConstructorArgs(['check-update'])
@@ -25,10 +26,10 @@ class UpdateCommandTest extends TestCase
 
         $commandMock->method('execute')->willReturn(Command::SUCCESS);
 
-        $app = new Application();
+        $app = new Application;
         $app->add($commandMock);
 
-        $output = new NullOutput();
+        $output = new NullOutput;
         $command = $app->doRun(new ArrayInput(['command' => 'check-update']), $output);
 
         $this->assertEquals(Command::SUCCESS, $command);

@@ -7,6 +7,7 @@ use NativeCLI\Traits\PackageVersionRetrieverTrait;
 class NativePHP
 {
     use PackageVersionRetrieverTrait;
+
     public const NATIVEPHP_PACKAGES = [
         'nativephp/electron',
         'nativephp/laravel',

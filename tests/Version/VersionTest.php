@@ -3,7 +3,6 @@
 namespace NativeCLI\Tests\Version;
 
 use NativeCLI\Exception;
-use NativeCLI\NativePHP;
 use NativeCLI\Version;
 use PHPUnit\Framework\TestCase;
 use z4kn4fein\SemVer\Version as SemanticVersion;
@@ -13,7 +12,7 @@ class VersionTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testVersionNotLessThatLatestRelease()
+    public function test_version_not_less_that_latest_release()
     {
         $latestVersion = Version::getLatestVersion();
         $currentVersion = Version::get();

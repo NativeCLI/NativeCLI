@@ -25,7 +25,7 @@ class InstallNativePHPMobileCommand extends Command
     {
         $output->writeln('Retrieving NativePHP for iOS Repo...');
 
-        $composer = new Composer(new Filesystem(), getcwd());
+        $composer = new Composer(new Filesystem, getcwd());
         $repoMan = new RepositoryManager($composer);
         $repoMan->addRepository('composer', 'https://nativephp.composer.sh');
         $composerInstallSuccessful = $composer->requirePackages(
@@ -34,7 +34,7 @@ class InstallNativePHPMobileCommand extends Command
             tty: Process::isTtySupported()
         );
 
-        if (!$composerInstallSuccessful) {
+        if (! $composerInstallSuccessful) {
             $output->writeln('<error>Failed to install NativePHP for iOS.</error>');
 
             return Command::FAILURE;

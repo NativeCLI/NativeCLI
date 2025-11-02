@@ -33,11 +33,11 @@ class Composer extends \Illuminate\Support\Composer
         return rtrim($globalDirectory, "\n");
     }
 
-    public function findGlobalComposerFile(string $file = 'composer.json'): null|string
+    public function findGlobalComposerFile(string $file = 'composer.json'): ?string
     {
         $filePath = "{$this->findGlobalComposerHomeDirectory()}/$file";
 
-        if (!file_exists($filePath)) {
+        if (! file_exists($filePath)) {
             throw new InvalidArgumentException("Global composer file not found at [$filePath].");
         }
 
@@ -74,7 +74,7 @@ class Composer extends \Illuminate\Support\Composer
                 }
             }
 
-            if (!$found && $throwOnError) {
+            if (! $found && $throwOnError) {
                 throw new RuntimeException("Package [$package] is not installed.");
             }
         }
@@ -91,7 +91,7 @@ class Composer extends \Illuminate\Support\Composer
     {
         $composerLockFile = "$this->workingPath/composer.lock";
 
-        if (!file_exists($composerLockFile)) {
+        if (! file_exists($composerLockFile)) {
             throw new RuntimeException("Unable to locate `composer.lock` file at [$this->workingPath].");
         }
 
@@ -114,13 +114,13 @@ class Composer extends \Illuminate\Support\Composer
                 $command->push('--dev');
             })->all();
 
-        return 0 === $this->getProcess($command, ['COMPOSER_MEMORY_LIMIT' => '-1'])
-                ->setTty($tty)
-                ->run(
-                    $output instanceof OutputInterface
-                        ? function ($type, $line) use ($output) {
-                            $output->write('    ' . $line);
-                        } : $output
-                );
+        return $this->getProcess($command, ['COMPOSER_MEMORY_LIMIT' => '-1'])
+            ->setTty($tty)
+            ->run(
+                $output instanceof OutputInterface
+                    ? function ($type, $line) use ($output) {
+                        $output->write('    '.$line);
+                    } : $output
+            ) === 0;
     }
 }

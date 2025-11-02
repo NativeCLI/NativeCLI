@@ -42,14 +42,14 @@ class UpdateNativePHPCommand extends Command
         $output->writeln('<info>Checking for updates...</info>', $this->getOutputVerbosityLevel($input));
 
         $updateInfo = $this->getUpdateInformation();
-        if ($updateInfo->isEmpty() || !$updateInfo->where('isOutdated', true)->count()) {
+        if ($updateInfo->isEmpty() || ! $updateInfo->where('isOutdated', true)->count()) {
             $output->writeln('<info>🚀 NativePHP is already up to date. 🚀</info>', $this->getOutputVerbosityLevel($input));
         } else {
             /** @var QuestionHelper $helper */
             $helper = $this->getHelper('question');
             $question = new ConfirmationQuestion(
-                'The following packages will be updated: ' . PHP_EOL
-                    . $updateInfo->where('isOutdated', true)
+                'The following packages will be updated: '.PHP_EOL
+                    .$updateInfo->where('isOutdated', true)
                         ->map(function ($packageInfo, $key) {
                             return sprintf(
                                 '%s - Old: <error>%s</error> | Latest: <info>%s</info>',
@@ -58,11 +58,11 @@ class UpdateNativePHPCommand extends Command
                                 $packageInfo['latest']
                             );
                         })
-                        ->implode(PHP_EOL) . PHP_EOL
-                    . '<info>Continue? (y/N)</info>',
+                        ->implode(PHP_EOL).PHP_EOL
+                    .'<info>Continue? (y/N)</info>',
             );
 
-            if (!$helper->ask($input, $output, $question)) {
+            if (! $helper->ask($input, $output, $question)) {
                 $output->writeln('<info>Update cancelled.</info>', $this->getOutputVerbosityLevel($input));
 
                 return Command::SUCCESS;
@@ -70,8 +70,8 @@ class UpdateNativePHPCommand extends Command
 
             $output->writeln('<info>Updating NativePHP...</info>', $this->getOutputVerbosityLevel($input));
 
-            $composer = new Composer(new Filesystem(), getcwd());
-            $composerOutput = new BufferedOutput();
+            $composer = new Composer(new Filesystem, getcwd());
+            $composerOutput = new BufferedOutput;
             $composer->requirePackages(
                 $updateInfo->where('isOutdated', true)
                     ->map(function ($packageInfo, $key) {
@@ -109,7 +109,7 @@ class UpdateNativePHPCommand extends Command
 
         $checkInput->setInteractive(false);
 
-        $output = new BufferedOutput();
+        $output = new BufferedOutput;
 
         $status = $this->getApplication()->doRun($checkInput, $output);
 

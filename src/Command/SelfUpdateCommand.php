@@ -81,10 +81,10 @@ class SelfUpdateCommand extends Command
         } else {
             $availableVersions = Version::getAvailableVersions();
 
-            if (!$availableVersions->contains($version)) {
+            if (! $availableVersions->contains($version)) {
                 $output->writeln($format === 'json'
-                    ? json_encode(['error' => 'Version ' . $version . ' is not available'])
-                    : '<error>Version ' . $version . ' is not available</error>');
+                    ? json_encode(['error' => 'Version '.$version.' is not available'])
+                    : '<error>Version '.$version.' is not available</error>');
 
                 return Command::FAILURE;
             }
@@ -95,8 +95,8 @@ class SelfUpdateCommand extends Command
             if ($version === null) {
                 $output->writeln(
                     $format === 'json'
-                        ? json_encode(['error' => 'Failed to retrieve version ' . $version])
-                        : '<error>Failed to retrieve version ' . $version . '</error>'
+                        ? json_encode(['error' => 'Failed to retrieve version '.$version])
+                        : '<error>Failed to retrieve version '.$version.'</error>'
                 );
 
                 return Command::FAILURE;
@@ -117,7 +117,7 @@ class SelfUpdateCommand extends Command
             $output->writeln(
                 $format === 'json'
                 ? json_encode(['update_available' => true, 'version' => (string) $version])
-                : '<info>Update available: ' . $version . '</info>'
+                : '<info>Update available: '.$version.'</info>'
             );
 
             return Command::SUCCESS;
@@ -126,11 +126,11 @@ class SelfUpdateCommand extends Command
         /** @var QuestionHelper $questionHelper */
         $questionHelper = $this->getHelper('question');
         $question = new ConfirmationQuestion(
-            'Are you sure you want to update to version ' . $version . '? [Y/n]',
+            'Are you sure you want to update to version '.$version.'? [Y/n]',
             true
         );
 
-        if (!$questionHelper->ask($input, $output, $question)) {
+        if (! $questionHelper->ask($input, $output, $question)) {
             $output->writeln(
                 $format === 'json'
                 ? json_encode(['error' => 'Update cancelled by user'])
@@ -143,11 +143,11 @@ class SelfUpdateCommand extends Command
         $output->writeln(
             $format === 'json'
             ? json_encode(['update_available' => true, 'version' => (string) $version])
-            : '<info>Updating to version ' . $version . '</info>'
+            : '<info>Updating to version '.$version.'</info>'
         );
 
-        $composer = new Composer(new Filesystem(), getcwd());
-        $process = new Process([...$composer->findComposer(), 'global', 'require', 'nativecli/nativecli:' . $version]);
+        $composer = new Composer(new Filesystem, getcwd());
+        $process = new Process([...$composer->findComposer(), 'global', 'require', 'nativecli/nativecli:'.$version]);
         $status = $process->run(function ($type, $buffer) use ($output) {
             $output->write($buffer);
         });
@@ -155,8 +155,8 @@ class SelfUpdateCommand extends Command
         if ($status !== Command::SUCCESS) {
             $output->writeln(
                 $format === 'json'
-                ? json_encode(['error' => 'Failed to update to version ' . $version])
-                : '<error>Failed to update to version ' . $version . '</error>'
+                ? json_encode(['error' => 'Failed to update to version '.$version])
+                : '<error>Failed to update to version '.$version.'</error>'
             );
 
             return $status;
@@ -164,8 +164,8 @@ class SelfUpdateCommand extends Command
 
         $output->writeln(
             $format === 'json'
-            ? json_encode(['success' => 'Successfully updated to version ' . $version])
-            : '<info>Successfully updated to version ' . $version . '</info>'
+            ? json_encode(['success' => 'Successfully updated to version '.$version])
+            : '<info>Successfully updated to version '.$version.'</info>'
         );
 
         return Command::SUCCESS;

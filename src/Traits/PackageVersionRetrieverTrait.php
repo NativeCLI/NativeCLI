@@ -39,7 +39,7 @@ trait PackageVersionRetrieverTrait
                 throw Exception\RateLimitedException::for($url);
             }
 
-            throw new RuntimeException('Failed to retrieve version for ' . $package);
+            throw new RuntimeException('Failed to retrieve version for '.$package);
         }
 
         $latestVersion = $data['tag_name'];
@@ -54,7 +54,7 @@ trait PackageVersionRetrieverTrait
      */
     protected static function getAllAvailableVersions(string $package): Collection
     {
-        $cache = new Cache();
+        $cache = new Cache;
         $cacheKey = 'available_versions';
         $sort = function (SemanticVersion $a, SemanticVersion $b) {
             // Sort by semantic version
@@ -104,11 +104,11 @@ trait PackageVersionRetrieverTrait
 
         // If URL includes github.com, check if GITHUB_TOKEN is in the environment
         if (str_contains($url, 'github.com') && $token = getenv('GITHUB_TOKEN')) {
-            $headers->put('Authorization', 'Bearer ' . $token);
+            $headers->put('Authorization', 'Bearer '.$token);
         }
 
         // Add User-Agent if doesn't exist:
-        if (!$headers->contains('User-Agent')) {
+        if (! $headers->contains('User-Agent')) {
             $headers->put('User-Agent', 'NativeCLI/Updater');
         }
 
@@ -116,13 +116,13 @@ trait PackageVersionRetrieverTrait
             $ch,
             CURLOPT_HTTPHEADER,
             $headers->map(function ($value, $key) {
-                return $key . ': ' . $value;
+                return $key.': '.$value;
             })->values()->all()
         );
 
         $response = curl_exec($ch);
 
-        if ($response === false || !is_string($response)) {
+        if ($response === false || ! is_string($response)) {
             return null;
         }
 
@@ -150,12 +150,12 @@ trait PackageVersionRetrieverTrait
 
     private static function getCacheFileLocation(): string
     {
-        return __DIR__ . '/../../cache/version_cache.json';
+        return __DIR__.'/../../cache/version_cache.json';
     }
 
     private static function cacheVersion(string $package, string $version): void
     {
-        if (!file_exists(dirname(self::getCacheFileLocation()))) {
+        if (! file_exists(dirname(self::getCacheFileLocation()))) {
             mkdir(dirname(self::getCacheFileLocation()), 0777, true);
         }
 
@@ -180,7 +180,7 @@ trait PackageVersionRetrieverTrait
 
     private static function getCacheData(): ?Collection
     {
-        if (!file_exists(self::getCacheFileLocation())) {
+        if (! file_exists(self::getCacheFileLocation())) {
             return collect();
         }
 
