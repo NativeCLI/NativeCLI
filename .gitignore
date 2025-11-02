@@ -1,6 +1,13 @@
 .idea
 vendor
 cache/*
+dist
+
+# Specific Files
 .phpunit.cache
 .nativecli.json
 test-dir
+
+# Mac
+.DS_Store
+Thumbs.db

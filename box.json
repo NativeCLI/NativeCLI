@@ -1,0 +1,4 @@
+{
+  "output": "dist/nativecli.phar",
+  "banner": false
+}
