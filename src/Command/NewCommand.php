@@ -66,7 +66,8 @@ class NewCommand extends Command
             $output->writeln('Creating a new NativePHP project...');
 
             $process = new Process(['laravel', 'new', ...$tokens]);
-            $process->setTty(Process::isTtySupported())
+            $process->setTimeout(null)
+                ->setTty(Process::isTtySupported())
                 ->mustRun(function ($type, $buffer) {
                     $this->output->write($buffer);
                 });
