@@ -83,7 +83,7 @@ class NewCommand extends Command
 
             if (! $input->getOption('mobile')) {
                 $composer->requirePackages(
-                    packages: ['nativephp/electron'],
+                    packages: ['nativephp/desktop'],
                     output: $output,
                     tty: Process::isTtySupported()
                 );
@@ -102,7 +102,8 @@ class NewCommand extends Command
 
             // Install NativePHP
             $nativePhpInstall = new Process([$php, 'artisan', 'native:install', '--no-interaction']);
-            $nativePhpInstall->setTty(Process::isTtySupported())
+            $nativePhpInstall->setTimeout(null)
+                ->setTty(Process::isTtySupported())
                 ->mustRun(function ($type, $buffer) {
                     $this->output->write($buffer);
                 });
