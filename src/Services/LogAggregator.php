@@ -105,11 +105,23 @@ class LogAggregator
     /**
      * Follow logs (for real-time monitoring)
      * Returns a callback that yields new log entries
+     *
+     * @param callable $callback Callback to execute for each log entry
+     * @param callable|null $shouldStopCallback Optional callback that returns true when following should stop
      */
-    public function follow(callable $callback): void
+    public function follow(callable $callback, ?callable $shouldStopCallback = null): void
     {
         $filePointers = [];
         $lastPositions = [];
+        $internalShouldStop = false;
+
+        // Set up signal handler for CTRL+C (SIGINT) if no external stop callback provided
+        if ($shouldStopCallback === null && function_exists('pcntl_signal') && function_exists('pcntl_async_signals')) {
+            pcntl_async_signals(true);
+            pcntl_signal(SIGINT, function () use (&$internalShouldStop) {
+                $internalShouldStop = true;
+            });
+        }
 
         // Open file pointers and seek to end
         foreach ($this->logSources as $sourceName => $path) {
@@ -125,8 +137,16 @@ class LogAggregator
             }
         }
 
-        // Poll for changes (infinite loop for follow mode)
-        while (true) { // @phpstan-ignore-line (intentional infinite loop for follow mode)
+        // Poll for changes (loop until stop condition is met)
+        while (true) {
+            // Check stop conditions
+            if ($shouldStopCallback !== null && $shouldStopCallback()) {
+                break;
+            }
+            if ($shouldStopCallback === null && $internalShouldStop) {
+                break;
+            }
+
             $hasNewContent = false;
 
             foreach ($filePointers as $sourceName => $fp) {
@@ -151,6 +171,11 @@ class LogAggregator
             if (!$hasNewContent) {
                 usleep(100000); // 100ms
             }
+        }
+
+        // Clean up file pointers
+        foreach ($filePointers as $fp) {
+            fclose($fp);
         }
     }
 

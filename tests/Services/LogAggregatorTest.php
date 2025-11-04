@@ -274,3 +274,98 @@ LOG;
         expect($log['timestamp'])->toBeInstanceOf(DateTime::class);
     }
 });
+
+test('follow mode can be stopped with SIGINT signal', function () {
+    // Skip test if pcntl is not available
+    if (!function_exists('pcntl_signal') || !function_exists('pcntl_async_signals')) {
+        expect(true)->toBeTrue();
+        return;
+    }
+
+    $logFile = $this->tempDir . '/test.log';
+    file_put_contents($logFile, '[2025-01-15 10:00:00] local.INFO: Initial message');
+
+    $aggregator = new LogAggregator();
+    $aggregator->addLogSource('test', $logFile);
+
+    $callbackCount = 0;
+    $startTime = microtime(true);
+
+    // Fork a process to send SIGINT after a short delay
+    $pid = pcntl_fork();
+
+    if ($pid == -1) {
+        throw new Exception('Could not fork process');
+    } elseif ($pid) {
+        // Parent process - run follow mode
+        try {
+            $aggregator->follow(function ($logEntry) use (&$callbackCount) {
+                $callbackCount++;
+            });
+        } catch (Exception $e) {
+            // Ignore exceptions
+        }
+
+        $duration = microtime(true) - $startTime;
+
+        // Wait for child process
+        pcntl_waitpid($pid, $status);
+
+        // Should have stopped within reasonable time (less than 1 second)
+        expect($duration)->toBeLessThan(1.0);
+    } else {
+        // Child process - send SIGINT after 200ms
+        usleep(200000);
+        posix_kill(posix_getppid(), SIGINT);
+        exit(0);
+    }
+})->skip(!function_exists('pcntl_fork'), 'pcntl_fork not available');
+
+test('follow mode can be stopped with stop callback', function () {
+    $logFile = $this->tempDir . '/test.log';
+    file_put_contents($logFile, '[2025-01-15 10:00:00] local.INFO: Initial message');
+
+    $aggregator = new LogAggregator();
+    $aggregator->addLogSource('test', $logFile);
+
+    $callbackCount = 0;
+    $iterations = 0;
+    $shouldStop = false;
+    $startTime = microtime(true);
+
+    // Start follow in a forked process
+    $pid = pcntl_fork();
+
+    if ($pid == -1) {
+        throw new Exception('Could not fork process');
+    } elseif ($pid) {
+        // Parent process - set stop flag after delay
+        usleep(200000); // 200ms
+        $shouldStop = true;
+
+        // Wait for child process
+        pcntl_waitpid($pid, $status);
+
+        $duration = microtime(true) - $startTime;
+
+        // Should have stopped within reasonable time (less than 1 second)
+        expect($duration)->toBeLessThan(1.0);
+    } else {
+        // Child process - run follow mode with stop callback
+        try {
+            $aggregator->follow(
+                function ($logEntry) use (&$callbackCount) {
+                    $callbackCount++;
+                },
+                function () use (&$iterations) {
+                    $iterations++;
+                    // Stop after 3 iterations
+                    return $iterations > 3;
+                }
+            );
+        } catch (Exception $e) {
+            // Ignore exceptions
+        }
+        exit(0);
+    }
+})->skip(!function_exists('pcntl_fork'), 'pcntl_fork not available');

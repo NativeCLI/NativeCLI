@@ -96,6 +96,17 @@ class LogsCommand extends Command
         $startDate = $input->getOption('start-date');
         $endDate = $input->getOption('end-date');
 
+        // Set up signal handling at command level for follow mode
+        $shouldStop = false;
+        if ($follow && function_exists('pcntl_signal') && function_exists('pcntl_async_signals')) {
+            pcntl_async_signals(true);
+            pcntl_signal(SIGINT, function () use (&$shouldStop, $output) {
+                $output->writeln('');
+                $output->writeln('<info>Stopping...</info>');
+                $shouldStop = true;
+            });
+        }
+
         // Detect app ID for production logs
         $appId = $this->detectAppId();
 
@@ -145,18 +156,33 @@ class LogsCommand extends Command
 
         // Follow mode (real-time)
         if ($follow) {
-            $output->writeln('<info>Following logs... (Press Ctrl+C to stop)</info>');
+            $message = '<info>Following logs... (Press Ctrl+C to stop)</info>';
+
+            // Warn if pcntl is not available
+            if (!function_exists('pcntl_signal') || !function_exists('pcntl_async_signals')) {
+                $message .= PHP_EOL . '<comment>Note: PCNTL extension not available. You may need to terminate the process manually.</comment>';
+            }
+
+            $output->writeln($message);
             $output->writeln('');
 
             try {
-                $aggregator->follow(function ($logEntry) use ($output) {
-                    $this->formatLogEntry($output, $logEntry);
-                });
+                $aggregator->follow(
+                    function ($logEntry) use ($output) {
+                        $this->formatLogEntry($output, $logEntry);
+                    },
+                    function () use (&$shouldStop) {
+                        return $shouldStop;
+                    }
+                );
             } catch (\Exception $e) {
                 $output->writeln("<error>Error following logs: {$e->getMessage()}</error>");
 
                 return Command::FAILURE;
             }
+
+            // Exit cleanly after follow mode
+            return Command::SUCCESS;
         }
 
         // Standard mode (display logs)
