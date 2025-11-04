@@ -3,7 +3,6 @@
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use NativeCLI\Command\LogsCommand;
-use Symfony\Component\Filesystem\Filesystem;
 
 beforeEach(function () {
     // Create a temporary Laravel project structure

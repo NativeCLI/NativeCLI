@@ -13,7 +13,7 @@ define('TESTS_ROOT', __DIR__);
 define('TESTS_DATA_DIR', TESTS_ROOT . '/data');
 define('ROOT_DIR', dirname(TESTS_ROOT));
 define('SRC_DIR', ROOT_DIR . '/src');
-define('TESTS_TEMP_DIR', TESTS_ROOT . '/tmp');
+define('TESTS_TEMP_DIR', TESTS_ROOT . '/data/tmp');
 
 // If defined that we're in a GH action, create a composer file
 if (getenv('GITHUB_ACTIONS')) {
