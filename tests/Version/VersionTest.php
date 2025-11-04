@@ -15,7 +15,7 @@ test('can get latest version', function () {
 
     expect($latestVersion)->toBeInstanceOf(SemanticVersion::class)
         ->and($latestVersion->getMajor())->toBeGreaterThanOrEqual(0);
-})->skip(fn () => getenv('GITHUB_ACTIONS'), 'Skipping API test in CI to avoid rate limiting');
+});
 
 test('can compare versions', function () {
     $currentVersion = Version::get();
@@ -28,4 +28,4 @@ test('can compare versions', function () {
     // But in dev, it might be behind, so we just verify we can compare them
     $comparison = $currentVersion->isGreaterThanOrEqual($latestVersion);
     expect($comparison)->toBeIn([true, false]);
-})->skip(fn () => getenv('GITHUB_ACTIONS'), 'Skipping API test in CI to avoid rate limiting');
+});

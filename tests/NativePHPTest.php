@@ -15,4 +15,4 @@ test('can get latest versions of nativephp packages', function () {
     expect($versions)->toBeArray()
         ->and($versions)->toHaveKey('nativephp/desktop')
         ->and($versions['nativephp/desktop'])->toBeInstanceOf(SemanticVersion::class);
-})->skip(fn () => getenv('GITHUB_ACTIONS'), 'Skipping API test in CI to avoid rate limiting');
+});
