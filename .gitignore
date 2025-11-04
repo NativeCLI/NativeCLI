@@ -11,3 +11,7 @@ test-dir
 # Mac
 .DS_Store
 Thumbs.db
+
+# AI
+.claude
+.junie
