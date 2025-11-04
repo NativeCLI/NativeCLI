@@ -55,7 +55,7 @@ class NewCommand extends Command
         $this->output = $output;
         $this->input = $input;
         $cwd = getcwd();
-        $filePath = $cwd.'/'.$input->getArgument('name');
+        $filePath = $cwd . '/' . $input->getArgument('name');
 
         /**
          * @noinspection PhpPossiblePolymorphicInvocationInspection
@@ -84,9 +84,9 @@ class NewCommand extends Command
 
             chdir($input->getArgument('name'));
 
-            $composer = new Composer(new Filesystem, $filePath);
+            $composer = new Composer(new Filesystem(), $filePath);
 
-            if (! $input->getOption('mobile')) {
+            if (!$input->getOption('mobile')) {
                 $composer->requirePackages(
                     packages: ['nativephp/desktop'],
                     output: $output,
@@ -113,13 +113,13 @@ class NewCommand extends Command
                     $this->output->write($buffer);
                 });
 
-            if (! $nativePhpInstall->isSuccessful()) {
+            if (!$nativePhpInstall->isSuccessful()) {
                 throw new CommandFailed('NativePHP installation failed.');
             }
 
             if ($input->getOption('mobile')) {
                 $this->populateMobileEnv(
-                    rtrim($filePath, '/').'/.env',
+                    rtrim($filePath, '/') . '/.env',
                 );
             }
 
@@ -139,11 +139,11 @@ class NewCommand extends Command
                     });
             }
         } catch (CommandFailed $e) {
-            $output->writeln('<error>'.$e->getMessage().'</error>');
+            $output->writeln('<error>' . $e->getMessage() . '</error>');
 
             return Command::FAILURE;
         } catch (Throwable $e) {
-            $output->writeln('<error>'.$e->getMessage().'</error>');
+            $output->writeln('<error>' . $e->getMessage() . '</error>');
 
             return Command::FAILURE;
         }
@@ -194,7 +194,7 @@ class NewCommand extends Command
                     // - Only letters and digits allowed within segments (hyphens/underscores omitted for cross-platform compatibility)
                     // Example valid: com.example.app, io.mycompany.app
                     $pattern = '/^[A-Za-z][A-Za-z0-9]*(\.[A-Za-z][A-Za-z0-9]*)+$/';
-                    if (! preg_match($pattern, $value)) {
+                    if (!preg_match($pattern, $value)) {
                         return 'Invalid App ID. Use reverse-DNS format like com.example.app with at least two segments. Each segment must start with a letter and contain only letters or digits.';
                     }
 
@@ -221,11 +221,11 @@ class NewCommand extends Command
             $newContents = preg_replace('/^NATIVEPHP_APP_ID=.*$/m', "NATIVEPHP_APP_ID=$appId", $currentContents);
         } else {
             // Otherwise, append to the end of the file
-            $newContents = rtrim($currentContents)."\nNATIVEPHP_APP_ID=$appId\n";
+            $newContents = rtrim($currentContents) . "\nNATIVEPHP_APP_ID=$appId\n";
         }
 
         // Check for existing `NATIVEPHP_APP_VERSION=*`. Do not replace if present.
-        if (! preg_match('/^NATIVEPHP_APP_VERSION=.*$/m', $newContents)) {
+        if (!preg_match('/^NATIVEPHP_APP_VERSION=.*$/m', $newContents)) {
             $newContents .= "NATIVEPHP_APP_VERSION=DEBUG\n";
         }
 

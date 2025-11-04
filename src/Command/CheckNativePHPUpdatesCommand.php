@@ -35,7 +35,7 @@ class CheckNativePHPUpdatesCommand extends Command
     {
         $returnJson = $input->getOption('format') === 'json';
 
-        $composer = new Composer(new Filesystem, getcwd());
+        $composer = new Composer(new Filesystem(), getcwd());
 
         if ($composer->packageExistsInComposerFile('nativephp/mobile')) {
             $output->writeln(
@@ -49,7 +49,7 @@ class CheckNativePHPUpdatesCommand extends Command
 
         try {
             // Throws if composer.json is not found.
-            if (! $composer->isComposerFilePresent()) {
+            if (!$composer->isComposerFilePresent()) {
                 throw new CommandFailed('composer.json not found in the current directory.');
             }
 
@@ -95,7 +95,7 @@ class CheckNativePHPUpdatesCommand extends Command
             }
 
             if ($returnJson) {
-                if (! empty($result)) {
+                if (!empty($result)) {
                     $output->writeln(json_encode($result));
                 } else {
                     $output->writeln(json_encode(['error' => 'Could not check packages.']));

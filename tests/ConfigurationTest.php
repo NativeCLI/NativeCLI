@@ -4,15 +4,15 @@ use Illuminate\Filesystem\Filesystem;
 use NativeCLI\Configuration;
 
 beforeEach(function () {
-    $this->filesystem = new Filesystem;
-    $this->testDir = sys_get_temp_dir().'/nativecli-test-'.uniqid();
+    $this->filesystem = new Filesystem();
+    $this->testDir = sys_get_temp_dir() . '/nativecli-test-' . uniqid();
     mkdir($this->testDir);
 });
 
 afterEach(function () {
     // Clean up test directory
-    if (file_exists($this->testDir.'/.nativecli.json')) {
-        unlink($this->testDir.'/.nativecli.json');
+    if (file_exists($this->testDir . '/.nativecli.json')) {
+        unlink($this->testDir . '/.nativecli.json');
     }
     if (is_dir($this->testDir)) {
         rmdir($this->testDir);
@@ -29,9 +29,9 @@ test('can initialize configuration file with default values', function () {
     $config = new Configuration($this->filesystem, $this->testDir);
     $config->init();
 
-    expect(file_exists($this->testDir.'/.nativecli.json'))->toBeTrue();
+    expect(file_exists($this->testDir . '/.nativecli.json'))->toBeTrue();
 
-    $fileContents = json_decode(file_get_contents($this->testDir.'/.nativecli.json'), true);
+    $fileContents = json_decode(file_get_contents($this->testDir . '/.nativecli.json'), true);
 
     expect($fileContents)->toBeArray()
         ->and($fileContents)->toHaveKey('updates')

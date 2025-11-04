@@ -55,7 +55,7 @@ final class Configuration
      */
     public static function global(): Configuration
     {
-        $filesystem = new Filesystem;
+        $filesystem = new Filesystem();
         $composer = new Composer($filesystem);
 
         return new Configuration(
@@ -70,7 +70,7 @@ final class Configuration
     public static function local(): Configuration
     {
         return new Configuration(
-            new Filesystem,
+            new Filesystem(),
             getcwd()
         );
     }
@@ -99,7 +99,7 @@ final class Configuration
 
     private function getFilePath(): string
     {
-        return $this->workingPath.'/'.self::FILENAME;
+        return $this->workingPath . '/' . self::FILENAME;
     }
 
     /**
@@ -107,7 +107,7 @@ final class Configuration
      */
     private function load(): void
     {
-        if (! $this->filesystem->exists($this->getFilePath())) {
+        if (!$this->filesystem->exists($this->getFilePath())) {
             $this->config = [];
 
             return;

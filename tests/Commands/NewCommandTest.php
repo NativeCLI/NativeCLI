@@ -3,7 +3,7 @@
 use NativeCLI\Application;
 
 test('new command is registered', function () {
-    $app = new Application;
+    $app = new Application();
 
     $command = $app->find('new');
 
