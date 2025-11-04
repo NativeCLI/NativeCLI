@@ -1,101 +1,145 @@
 <?php
 
-namespace NativeCLI\Tests;
-
 use NativeCLI\Cache;
-use PHPUnit\Framework\Attributes\Depends;
-use PHPUnit\Framework\TestCase;
 
-class CacheTest extends TestCase
-{
-    public function testCacheExistsCommand()
-    {
-        // Place a file in the cache directory - key: test
-        touch(ROOT_DIR . '/cache/test_cache.json');
+test('cache exists returns false when file does not exist', function () {
+    $cache = new Cache();
 
-        $cache = new Cache();
+    expect($cache->cacheExists('non_existent'))->toBeFalse();
+});
 
-        // TEST: cacheExists returns false when a file does not exist
-        $this->assertFalse($cache->cacheExists('non_existent'));
+test('cache exists returns true when file exists', function () {
+    // Place a file in the cache directory - key: test
+    touch(ROOT_DIR . '/cache/test_cache.json');
 
-        // TEST: cacheExists returns true when a file exists
-        $this->assertTrue($cache->cacheExists('test'));
+    $cache = new Cache();
 
-        // CLEANUP: Remove the test cache file
-        unlink(ROOT_DIR . '/cache/test_cache.json');
-    }
+    expect($cache->cacheExists('test'))->toBeTrue();
 
-    public function testRetrieveCacheCommand()
-    {
-        // Place a file in the cache directory - key: test
-        file_put_contents(ROOT_DIR . '/cache/test_cache.json', json_encode(['test' => 'data', 'expires' => time() + 3600]));
+    // CLEANUP: Remove the test cache file
+    unlink(ROOT_DIR . '/cache/test_cache.json');
+});
 
-        $cache = new Cache();
+test('retrieve cache returns null when file does not exist', function () {
+    $cache = new Cache();
 
-        // TEST: retrieveCache returns null when a file does not exist
-        $this->assertNull($cache->retrieveCache('non_existent'));
+    expect($cache->retrieveCache('non_existent'))->toBeNull();
+});
 
-        // TEST: retrieveCache returns the contents of the cache file
-        $this->assertEquals(['test' => 'data'], $cache->retrieveCache('test')->toArray());
+test('retrieve cache returns contents of cache file', function () {
+    // Place a file in the cache directory - key: test
+    file_put_contents(ROOT_DIR . '/cache/test_cache.json', json_encode(['test' => 'data', 'expires' => time() + 3600]));
 
-        // CLEANUP: Remove the test cache file
-        unlink(ROOT_DIR . '/cache/test_cache.json');
-    }
+    $cache = new Cache();
 
-    public function testRemoveCacheCommand()
-    {
-        // Place a file in the cache directory - key: test
-        touch(ROOT_DIR . '/cache/test_cache.json');
+    expect($cache->retrieveCache('test')->toArray())->toBe(['test' => 'data']);
 
-        $cache = new Cache();
+    // CLEANUP: Remove the test cache file
+    unlink(ROOT_DIR . '/cache/test_cache.json');
+});
 
-        // TEST: removeCache returns false when a file does not exist
-        $this->assertFalse($cache->removeCache('non_existent'));
+test('retrieve cache returns null when cache is expired', function () {
+    // Place a file in the cache directory - key: test with expired timestamp
+    file_put_contents(ROOT_DIR . '/cache/test_cache.json', json_encode(['test' => 'data', 'expires' => time() - 3600]));
 
-        // TEST: removeCache returns true when a file exists
-        $this->assertTrue($cache->removeCache('test'));
+    $cache = new Cache();
 
-        // TEST: The cache file has been removed
-        $this->assertFalse(file_exists(ROOT_DIR . '/cache/test_cache.json'));
-    }
+    expect($cache->retrieveCache('test'))->toBeNull();
 
-    public function testGetAllAvailableCachesCommand()
-    {
-        $cache = new Cache();
+    // CLEANUP: Remove the test cache file
+    unlink(ROOT_DIR . '/cache/test_cache.json');
+});
 
-        // Ensure cache directory is empty
-        $cache->clearAllCaches();
+test('remove cache returns false when file does not exist', function () {
+    $cache = new Cache();
 
-        // TEST: getAllAvailableCaches returns an empty collection when no cache files exist
-        $this->assertEquals([], $cache->getAllAvailableCaches()->toArray());
+    expect($cache->removeCache('non_existent'))->toBeFalse();
+});
 
-        // Place a file in the cache directory - key: test
-        touch(ROOT_DIR . '/cache/test_cache.json');
+test('remove cache returns true and removes file when it exists', function () {
+    // Place a file in the cache directory - key: test
+    touch(ROOT_DIR . '/cache/test_cache.json');
 
-        // TEST: getAllAvailableCaches returns a collection of cache keys
-        $this->assertEquals(['test'], $cache->getAllAvailableCaches()->toArray());
+    $cache = new Cache();
 
-        // CLEANUP: Remove the test cache file
-        unlink(ROOT_DIR . '/cache/test_cache.json');
-    }
+    expect($cache->removeCache('test'))->toBeTrue()
+        ->and(file_exists(ROOT_DIR . '/cache/test_cache.json'))->toBeFalse();
+});
 
-    /**
-     * @return void
-     */
-    #[Depends('testGetAllAvailableCachesCommand')]
-    public function testClearAllCachesCommand()
-    {
-        // Place a file in the cache directory - key: test{1,2,3}
-        touch(ROOT_DIR . '/cache/test1_cache.json');
-        touch(ROOT_DIR . '/cache/test2_cache.json');
-        touch(ROOT_DIR . '/cache/test3_cache.json');
+test('get all available caches returns empty collection when no cache files exist', function () {
+    $cache = new Cache();
 
-        $cache = new Cache();
+    // Ensure cache directory is empty
+    $cache->clearAllCaches();
 
-        // TEST: clearAllCaches removes all cache files
-        $cache->clearAllCaches();
+    expect($cache->getAllAvailableCaches()->toArray())->toBe([]);
+});
 
-        // TEST: The cache directory is empty
-        $this->assertEquals([], $cache->getAllAvailableCaches()->toArray());
-    }
-}
+test('get all available caches returns collection of cache keys', function () {
+    $cache = new Cache();
+
+    // Ensure cache directory is empty
+    $cache->clearAllCaches();
+
+    // Place a file in the cache directory - key: test
+    touch(ROOT_DIR . '/cache/test_cache.json');
+
+    expect($cache->getAllAvailableCaches()->toArray())->toBe(['test']);
+
+    // CLEANUP: Remove the test cache file
+    unlink(ROOT_DIR . '/cache/test_cache.json');
+});
+
+test('clear all caches removes all cache files', function () {
+    // Place files in the cache directory - key: test{1,2,3}
+    touch(ROOT_DIR . '/cache/test1_cache.json');
+    touch(ROOT_DIR . '/cache/test2_cache.json');
+    touch(ROOT_DIR . '/cache/test3_cache.json');
+
+    $cache = new Cache();
+
+    $cache->clearAllCaches();
+
+    expect($cache->getAllAvailableCaches()->toArray())->toBe([]);
+});
+
+test('add to cache creates new cache file with data', function () {
+    $cache = new Cache();
+
+    // Ensure cache directory is empty
+    $cache->clearAllCaches();
+
+    $cache->addToCache('test', 'key', ['value' => 'data']);
+
+    expect($cache->cacheExists('test'))->toBeTrue();
+
+    // Retrieve the specific element from the cache
+    $retrievedItem = $cache->retrieveCache('test', 'key');
+    expect($retrievedItem)->not->toBeNull()
+        ->and($retrievedItem->toArray())->toBe(['value' => 'data']);
+
+    // CLEANUP: Remove the test cache file
+    unlink(ROOT_DIR . '/cache/test_cache.json');
+});
+
+test('add to cache overwrites existing cache file (known limitation)', function () {
+    $cache = new Cache();
+
+    // Ensure cache directory is empty
+    $cache->clearAllCaches();
+
+    $cache->addToCache('test', 'key1', ['value' => 'data1']);
+    $cache->addToCache('test', 'key2', ['value' => 'data2']);
+
+    // Note: Due to how retrieveCache works in addToCache, only the last item is preserved
+    // This is a known limitation where addToCache doesn't properly append to existing cache files
+    $item1 = $cache->retrieveCache('test', 'key1');
+    $item2 = $cache->retrieveCache('test', 'key2');
+
+    expect($item1)->toBeNull() // key1 was overwritten
+        ->and($item2)->not->toBeNull()
+        ->and($item2->toArray())->toBe(['value' => 'data2']);
+
+    // CLEANUP: Remove the test cache file
+    unlink(ROOT_DIR . '/cache/test_cache.json');
+});

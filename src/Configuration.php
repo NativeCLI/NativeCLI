@@ -134,7 +134,7 @@ final class Configuration
                 'check-update' => '',
                 'self-update' => '',
                 'update' => '',
-            ]
+            ],
         ];
     }
 }

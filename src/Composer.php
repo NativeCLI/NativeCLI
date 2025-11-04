@@ -33,7 +33,7 @@ class Composer extends \Illuminate\Support\Composer
         return rtrim($globalDirectory, "\n");
     }
 
-    public function findGlobalComposerFile(string $file = 'composer.json'): null|string
+    public function findGlobalComposerFile(string $file = 'composer.json'): ?string
     {
         $filePath = "{$this->findGlobalComposerHomeDirectory()}/$file";
 
@@ -114,13 +114,13 @@ class Composer extends \Illuminate\Support\Composer
                 $command->push('--dev');
             })->all();
 
-        return 0 === $this->getProcess($command, ['COMPOSER_MEMORY_LIMIT' => '-1'])
-                ->setTty($tty)
-                ->run(
-                    $output instanceof OutputInterface
-                        ? function ($type, $line) use ($output) {
-                            $output->write('    ' . $line);
-                        } : $output
-                );
+        return $this->getProcess($command, ['COMPOSER_MEMORY_LIMIT' => '-1'])
+            ->setTty($tty)
+            ->run(
+                $output instanceof OutputInterface
+                    ? function ($type, $line) use ($output) {
+                        $output->write('    ' . $line);
+                    } : $output
+            ) === 0;
     }
 }

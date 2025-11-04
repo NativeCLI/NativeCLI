@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 class Cache
 {
     public const CACHE_DIR = __DIR__ . '/../cache';
+
     public const CACHE_FILENAME_FORMAT = '%s_cache.json';
 
     public function cacheExists(string $cache): bool

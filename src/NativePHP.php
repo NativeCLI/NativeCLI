@@ -7,10 +7,10 @@ use NativeCLI\Traits\PackageVersionRetrieverTrait;
 class NativePHP
 {
     use PackageVersionRetrieverTrait;
+
     public const NATIVEPHP_PACKAGES = [
-        'nativephp/electron',
-        'nativephp/laravel',
-        'nativephp/ios',
+        'nativephp/desktop',
+        'nativephp/mobile',
     ];
 
     /**
@@ -19,8 +19,7 @@ class NativePHP
     public static function getLatestVersions(): array
     {
         return [
-            'nativephp/electron' => self::getVersionForPackage('nativephp/electron'),
-            'nativephp/laravel' => self::getVersionForPackage('nativephp/laravel'),
+            'nativephp/desktop' => self::getVersionForPackage('nativephp/desktop'),
         ];
     }
 }

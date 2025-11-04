@@ -25,7 +25,7 @@ readonly class RepositoryManager
             function (array $composerFile) use ($type, $url) {
                 $composerFile['repositories'][] = [
                     'type' => $type,
-                    'url' => $url
+                    'url' => $url,
                 ];
 
                 return $composerFile;

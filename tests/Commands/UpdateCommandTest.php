@@ -1,36 +1,12 @@
 <?php
 
-namespace NativeCLI\Tests\Commands;
-
 use NativeCLI\Application;
-use NativeCLI\Command\CheckNativePHPUpdatesCommand;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\NullOutput;
-use Throwable;
 
-class UpdateCommandTest extends TestCase
-{
-    /**
-     * @throws Throwable
-     * @TODO Break out the updater to be more testable.
-     */
-    public function testCheckUpdateCommandCanExecute()
-    {
-        $commandMock = $this->getMockBuilder(CheckNativePHPUpdatesCommand::class)
-            ->setConstructorArgs(['check-update'])
-            ->onlyMethods(['execute'])
-            ->getMock();
+test('check update command is registered', function () {
+    $app = new Application();
 
-        $commandMock->method('execute')->willReturn(Command::SUCCESS);
+    $command = $app->find('check-update');
 
-        $app = new Application();
-        $app->add($commandMock);
-
-        $output = new NullOutput();
-        $command = $app->doRun(new ArrayInput(['command' => 'check-update']), $output);
-
-        $this->assertEquals(Command::SUCCESS, $command);
-    }
-}
+    expect($command)->not->toBeNull()
+        ->and($command->getName())->toBe('check-update');
+});
