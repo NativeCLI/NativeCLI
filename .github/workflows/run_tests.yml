@@ -40,4 +40,4 @@ jobs:
         run: ./vendor/bin/phpstan analyse
 
       - name: Run test suite
-        run: composer run-script test
+        run: ./vendor/bin/pest --colors=always
