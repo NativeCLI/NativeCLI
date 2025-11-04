@@ -5,7 +5,6 @@ namespace NativeCLI\Command;
 use Illuminate\Filesystem\Filesystem;
 use NativeCLI\Composer;
 use NativeCLI\Exception\CommandFailed;
-use NativeCLI\NativePHP;
 use NativeCLI\Services\RepositoryManager;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -17,6 +16,7 @@ use Symfony\Component\Process\Process;
 use Throwable;
 
 use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\text;
 
 #[AsCommand(
     name: 'new',
@@ -25,6 +25,7 @@ use function Laravel\Prompts\confirm;
 class NewCommand extends Command
 {
     private OutputInterface $output;
+    private InputInterface $input;
 
     protected function configure(): void
     {
@@ -52,8 +53,10 @@ class NewCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->output = $output;
+        $this->input = $input;
         $cwd = getcwd();
         $filePath = $cwd.'/'.$input->getArgument('name');
+
         /**
          * @noinspection PhpPossiblePolymorphicInvocationInspection
          *
@@ -114,6 +117,12 @@ class NewCommand extends Command
                 throw new CommandFailed('NativePHP installation failed.');
             }
 
+            if ($input->getOption('mobile')) {
+                $this->populateMobileEnv(
+                    rtrim($filePath, '/').'/.env',
+                );
+            }
+
             $output->writeln('<info>🚀 NativePHP installed successfully. Go forth and make great apps!</info>');
 
             if (confirm(
@@ -154,5 +163,76 @@ class NewCommand extends Command
         $output = trim($process->getOutput());
 
         return $process->isSuccessful() && $output ? $output : 'main';
+    }
+
+    private function populateMobileEnv(string $filePath): void
+    {
+        $appId = 'com.example.app';
+
+        if ($this->input->isInteractive()) {
+            $appId = text(
+                'What is the Application ID (e.g., com.example.app)?',
+                default: '',
+                validate: function (string $value) {
+                    $value = trim($value);
+
+                    if ($value === '') {
+                        return 'An App ID is required.';
+                    }
+
+                    if (strlen($value) > 255) {
+                        return 'The App ID must not exceed 255 characters.';
+                    }
+
+                    if (str_starts_with($value, 'com.nativephp')) {
+                        return 'The App ID must not start with "com.nativephp". Please choose a different App ID.';
+                    }
+
+                    // Reverse-DNS style validation (e.g., com.example.app)
+                    // - At least two dot-separated segments
+                    // - Each segment starts with a letter
+                    // - Only letters and digits allowed within segments (hyphens/underscores omitted for cross-platform compatibility)
+                    // Example valid: com.example.app, io.mycompany.app
+                    $pattern = '/^[A-Za-z][A-Za-z0-9]*(\.[A-Za-z][A-Za-z0-9]*)+$/';
+                    if (! preg_match($pattern, $value)) {
+                        return 'Invalid App ID. Use reverse-DNS format like com.example.app with at least two segments. Each segment must start with a letter and contain only letters or digits.';
+                    }
+
+                    // Finally, validate that the string does not contain `nativephp` in any segment.
+                    $segments = explode('.', $value);
+                    foreach ($segments as $segment) {
+                        if (strtolower($segment) === 'nativephp') {
+                            return 'The App ID must not contain the segment "nativephp". Please choose a different App ID.';
+                        }
+                    }
+
+                    return null;
+                },
+                transform: fn ($value) => trim($value),
+            );
+        }
+
+        $this->output->writeln("<info>Adding `NATIVEPHP_APP_ID=$appId to $filePath.</info>");
+
+        $currentContents = file_get_contents($filePath);
+
+        // Check for existing NATIVEPHP_APP_ID=* string and replace it if found
+        if (preg_match('/^NATIVEPHP_APP_ID=.*$/m', $currentContents)) {
+            $newContents = preg_replace('/^NATIVEPHP_APP_ID=.*$/m', "NATIVEPHP_APP_ID=$appId", $currentContents);
+        } else {
+            // Otherwise, append to the end of the file
+            $newContents = rtrim($currentContents)."\nNATIVEPHP_APP_ID=$appId\n";
+        }
+
+        // Check for existing `NATIVEPHP_APP_VERSION=*`. Do not replace if present.
+        if (! preg_match('/^NATIVEPHP_APP_VERSION=.*$/m', $newContents)) {
+            $newContents .= "NATIVEPHP_APP_VERSION=DEBUG\n";
+        }
+
+        $result = file_put_contents($filePath, $newContents);
+
+        if ($result === false) {
+            $this->output->writeln("<error>Failed to write NATIVEPHP_APP_ID to $filePath.</error>");
+        }
     }
 }
