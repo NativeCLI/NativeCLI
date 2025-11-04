@@ -4,7 +4,7 @@ use Illuminate\Filesystem\Filesystem;
 use NativeCLI\Composer;
 
 beforeEach(function () {
-    $this->filesystem = new Filesystem;
+    $this->filesystem = new Filesystem();
     $this->composer = new Composer($this->filesystem);
 });
 
@@ -45,7 +45,7 @@ test('can check if composer file is present in working path', function () {
 });
 
 test('returns false when composer file is not present', function () {
-    $tempDir = sys_get_temp_dir().'/test-no-composer-'.uniqid();
+    $tempDir = sys_get_temp_dir() . '/test-no-composer-' . uniqid();
     mkdir($tempDir);
 
     $composer = new Composer($this->filesystem, $tempDir);

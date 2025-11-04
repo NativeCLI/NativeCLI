@@ -38,8 +38,8 @@ final class Application extends \Symfony\Component\Console\Application
     public function run(?InputInterface $input = null, ?OutputInterface $output = null): int
     {
         try {
-            $input ??= new ArgvInput;
-            $output ??= new ConsoleOutput;
+            $input ??= new ArgvInput();
+            $output ??= new ConsoleOutput();
 
             $config = Configuration::compiled();
 
@@ -50,7 +50,7 @@ final class Application extends \Symfony\Component\Console\Application
                     '--format=json',
                 ]);
 
-                $tempOutput = new BufferedOutput;
+                $tempOutput = new BufferedOutput();
                 $this->find('self-update')->run($tempInput, $tempOutput);
 
                 $jsonOutput = json_decode($tempOutput->fetch(), true);
@@ -64,13 +64,13 @@ final class Application extends \Symfony\Component\Console\Application
                         $output->writeln('<info>Updating NativeCLI...</info>');
                         $tempInput = (new ArgvInput(['self-update']));
                         $tempInput->setInteractive(false);
-                        $updateCode = $this->find('self-update')->run($tempInput, new NullOutput);
+                        $updateCode = $this->find('self-update')->run($tempInput, new NullOutput());
                         if ($updateCode === 0) {
                             $output->writeln('<info>NativePHP has been updated.</info>');
 
                             // To appease the QA/CI Bots, lets ensure that we have an ArgvInput
                             if ($input instanceof ArgvInput) {
-                                Process::fromShellCommandline($this->filePath.' '.implode(' ', $input->getRawTokens()))
+                                Process::fromShellCommandline($this->filePath . ' ' . implode(' ', $input->getRawTokens()))
                                     ->run(function ($type, $buffer) use ($output) {
                                         $output->write($buffer);
                                     });
@@ -95,13 +95,13 @@ final class Application extends \Symfony\Component\Console\Application
     public function getCommands(): array
     {
         return [
-            new CheckNativePHPUpdatesCommand,
-            new ClearCacheCommand,
-            new ConfigurationCommand,
-            new InstallNativePHPMobileCommand,
-            new NewCommand,
-            new SelfUpdateCommand,
-            new UpdateNativePHPCommand,
+            new CheckNativePHPUpdatesCommand(),
+            new ClearCacheCommand(),
+            new ConfigurationCommand(),
+            new InstallNativePHPMobileCommand(),
+            new NewCommand(),
+            new SelfUpdateCommand(),
+            new UpdateNativePHPCommand(),
         ];
     }
 }

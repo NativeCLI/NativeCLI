@@ -37,7 +37,7 @@ class Composer extends \Illuminate\Support\Composer
     {
         $filePath = "{$this->findGlobalComposerHomeDirectory()}/$file";
 
-        if (! file_exists($filePath)) {
+        if (!file_exists($filePath)) {
             throw new InvalidArgumentException("Global composer file not found at [$filePath].");
         }
 
@@ -74,7 +74,7 @@ class Composer extends \Illuminate\Support\Composer
                 }
             }
 
-            if (! $found && $throwOnError) {
+            if (!$found && $throwOnError) {
                 throw new RuntimeException("Package [$package] is not installed.");
             }
         }
@@ -91,7 +91,7 @@ class Composer extends \Illuminate\Support\Composer
     {
         $composerLockFile = "$this->workingPath/composer.lock";
 
-        if (! file_exists($composerLockFile)) {
+        if (!file_exists($composerLockFile)) {
             throw new RuntimeException("Unable to locate `composer.lock` file at [$this->workingPath].");
         }
 
@@ -119,7 +119,7 @@ class Composer extends \Illuminate\Support\Composer
             ->run(
                 $output instanceof OutputInterface
                     ? function ($type, $line) use ($output) {
-                        $output->write('    '.$line);
+                        $output->write('    ' . $line);
                     } : $output
             ) === 0;
     }

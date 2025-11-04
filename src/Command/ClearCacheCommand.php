@@ -30,7 +30,7 @@ class ClearCacheCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $cache = new Cache;
+        $cache = new Cache();
         $cacheKey = strtolower(trim($input->getOption('cache')));
 
         /** @var QuestionHelper $questionHelper */
@@ -39,11 +39,11 @@ class ClearCacheCommand extends Command
         $question = new ConfirmationQuestion(
             $cacheKey === 'all'
                 ? 'Are you sure you want to clear all caches?'
-                : 'Are you sure you want to clear the '.$cacheKey.' cache? [Y/n]',
+                : 'Are you sure you want to clear the ' . $cacheKey . ' cache? [Y/n]',
             true
         );
 
-        if (! $questionHelper->ask($input, $output, $question)) {
+        if (!$questionHelper->ask($input, $output, $question)) {
             $output->writeln('<error>Cache clear cancelled by user.</error>');
 
             return Command::FAILURE;
@@ -70,7 +70,7 @@ class ClearCacheCommand extends Command
                 }
             });
         } else {
-            if (! $cache->cacheExists($cacheKey)) {
+            if (!$cache->cacheExists($cacheKey)) {
                 $output->writeln("<error>Cache $cacheKey does not exist</error>");
 
                 return Command::FAILURE;

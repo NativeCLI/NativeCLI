@@ -13,7 +13,7 @@ class Version
 
     public static function get(): ?SemanticVersion
     {
-        $composer = new Composer(new Filesystem);
+        $composer = new Composer(new Filesystem());
 
         return $composer->getPackageVersions(
             packages: ['nativecli/nativecli'],
