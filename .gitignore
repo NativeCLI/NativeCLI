@@ -8,6 +8,10 @@ dist
 .nativecli.json
 test-dir
 
+# Tests
+tests/data/tmp
+!tests/data/tmp/.gitkeep
+
 # Mac
 .DS_Store
 Thumbs.db

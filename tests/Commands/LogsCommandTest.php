@@ -3,10 +3,11 @@
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use NativeCLI\Command\LogsCommand;
+use Symfony\Component\Filesystem\Filesystem;
 
 beforeEach(function () {
     // Create a temporary Laravel project structure
-    $this->tempDir = sys_get_temp_dir() . '/nativecli_logs_test_' . uniqid();
+    $this->tempDir = TESTS_TEMP_DIR . '/nativecli_logs_test_' . uniqid();
     mkdir($this->tempDir);
     mkdir($this->tempDir . '/storage', 0755, true);
     mkdir($this->tempDir . '/storage/logs', 0755, true);
@@ -29,19 +30,15 @@ afterEach(function () {
     // Restore original directory
     chdir($this->originalDir);
 
-    // Clean up temporary directory
-    if (isset($this->tempDir) && file_exists($this->tempDir)) {
-        array_map('unlink', glob($this->tempDir . '/*'));
-        array_map('unlink', glob($this->tempDir . '/storage/logs/*'));
-        @rmdir($this->tempDir . '/storage/logs');
-        @rmdir($this->tempDir . '/storage');
-        @rmdir($this->tempDir);
+    // Remove the temporary test directory using the global helper
+    if (isset($this->tempDir)) {
+        remove_test_dir($this->tempDir);
     }
 });
 
 test('logs command fails when not in Laravel project', function () {
     // Change to a non-Laravel directory
-    chdir(sys_get_temp_dir());
+    chdir(TESTS_TEMP_DIR);
 
     $application = new Application();
     $application->add(new LogsCommand());

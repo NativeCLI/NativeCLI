@@ -4,15 +4,14 @@ use NativeCLI\Services\LogAggregator;
 
 beforeEach(function () {
     // Create a temporary directory for test log files
-    $this->tempDir = sys_get_temp_dir() . '/nativecli_test_' . uniqid();
+    $this->tempDir = TESTS_TEMP_DIR . '/nativecli_test_' . uniqid();
     mkdir($this->tempDir);
 });
 
 afterEach(function () {
-    // Clean up temporary directory
-    if (isset($this->tempDir) && file_exists($this->tempDir)) {
-        array_map('unlink', glob($this->tempDir . '/*'));
-        rmdir($this->tempDir);
+    // Clean up temporary directory using global helper
+    if (isset($this->tempDir)) {
+        remove_test_dir($this->tempDir);
     }
 });
 
