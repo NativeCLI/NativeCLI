@@ -15,3 +15,6 @@ Thumbs.db
 # AI
 .claude
 .junie
+
+# Internal Planning
+V2_FEATURES_REQUIREMENTS.md
