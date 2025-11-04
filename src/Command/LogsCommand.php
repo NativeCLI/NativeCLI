@@ -228,7 +228,7 @@ class LogsCommand extends Command
         if (file_exists($configPath)) {
             $configContent = file_get_contents($configPath);
             if (preg_match("/'app_id'\s*=>\s*(?:env\('NATIVEPHP_APP_ID'(?:,\s*)?['\"]([^'\"]+)['\"]\))|['\"]([^'\"]+)['\"]/", $configContent, $matches)) {
-                return $matches[1] ?? $matches[2] ?? 'unknown';
+                return !empty($matches[1]) ? $matches[1] : (!empty($matches[2]) ? $matches[2] : 'unknown');
             }
         }
 

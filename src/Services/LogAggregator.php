@@ -125,8 +125,8 @@ class LogAggregator
             }
         }
 
-        // Poll for changes
-        while (true) {
+        // Poll for changes (infinite loop for follow mode)
+        while (true) { // @phpstan-ignore-line (intentional infinite loop for follow mode)
             $hasNewContent = false;
 
             foreach ($filePointers as $sourceName => $fp) {
@@ -151,11 +151,6 @@ class LogAggregator
             if (!$hasNewContent) {
                 usleep(100000); // 100ms
             }
-        }
-
-        // Cleanup (though this is unreachable in infinite loop)
-        foreach ($filePointers as $fp) {
-            fclose($fp);
         }
     }
 
@@ -202,7 +197,7 @@ class LogAggregator
         if (preg_match(self::LARAVEL_LOG_PATTERN, $line, $matches)) {
             return [
                 'timestamp' => new DateTime($matches['timestamp']),
-                'level' => strtolower($matches['level'] ?? 'info'),
+                'level' => strtolower($matches['level']),
                 'message' => trim($matches['message']),
                 'source' => $sourceName,
                 'raw' => $line,
