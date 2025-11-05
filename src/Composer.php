@@ -18,13 +18,14 @@ class Composer extends \Illuminate\Support\Composer
         $globalDirectory = null;
         $process = new Process(['composer', '-n', 'config', '--global', 'home']);
         // Get response from process to variable
-        $process->run(function ($type, $line) use (&$globalDirectory) {
-            if ($type === Process::ERR) {
-                return;
-            }
+        $process->setWorkingDirectory(NATIVECLI_CALL_DIRECTORY)
+            ->run(function ($type, $line) use (&$globalDirectory) {
+                if ($type === Process::ERR) {
+                    return;
+                }
 
-            $globalDirectory = trim($line);
-        });
+                $globalDirectory = trim($line);
+            });
 
         if ($globalDirectory === null) {
             throw new RuntimeException('Unable to determine global composer home directory.');

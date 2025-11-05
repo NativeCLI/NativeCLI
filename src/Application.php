@@ -7,6 +7,7 @@ use NativeCLI\Command\ClearCacheCommand;
 use NativeCLI\Command\ConfigurationCommand;
 use NativeCLI\Command\InstallNativePHPMobileCommand;
 use NativeCLI\Command\LogsCommand;
+use NativeCLI\Command\Make\MakeMenuCommand;
 use NativeCLI\Command\NewCommand;
 use NativeCLI\Command\SelfUpdateCommand;
 use NativeCLI\Command\UpdateNativePHPCommand;
@@ -101,6 +102,7 @@ final class Application extends \Symfony\Component\Console\Application
             new ConfigurationCommand(),
             new InstallNativePHPMobileCommand(),
             new LogsCommand(),
+            new MakeMenuCommand(),
             new NewCommand(),
             new SelfUpdateCommand(),
             new UpdateNativePHPCommand(),
