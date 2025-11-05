@@ -7,6 +7,7 @@ ini_set('error_reporting', E_ALL);
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 
+
 if (file_exists(__DIR__.'/../../../autoload.php')) {
     /** @noinspection PhpUnresolvedIncludeInspection */
     require __DIR__.'/../../../autoload.php';
@@ -24,6 +25,7 @@ if (isset($_SERVER['HOME'])) {
 }
 
 define('NATIVECLI_HOME_PATH', $home_path .'/.nativephp');
+define('NATIVECLI_CALL_DIRECTORY', NativeCLI\Support\Environment::currentDirectory());
 
 /** @noinspection PhpUnhandledExceptionInspection */
 Application::create(__FILE__)->run();
