@@ -82,7 +82,7 @@ function remove_test_dir(string $dir): void
         // Fallback: robust recursive removal
     }
 
-    $removeDir = function ($dir) use (&$removeDir) {
+    $removeDir = function ($dir) {
         if (!file_exists($dir)) {
             return;
         }
