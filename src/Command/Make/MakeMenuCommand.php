@@ -73,18 +73,18 @@ HELP
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->menuGenerator = new MenuGenerator;
+        $this->menuGenerator = new MenuGenerator();
         $io = new SymfonyStyle($input, $output);
 
         // Check if in Laravel project
-        if (! $this->isInLaravelProject()) {
+        if (!$this->isInLaravelProject()) {
             $io->error('This command must be run from within a Laravel project.');
 
             return Command::FAILURE;
         }
 
         // Check if NativePHP is installed
-        if (! $this->isNativePHPInstalled()) {
+        if (!$this->isNativePHPInstalled()) {
             $io->error('NativePHP does not appear to be installed. Run "composer require nativephp/desktop" first.');
 
             return Command::FAILURE;
@@ -94,7 +94,7 @@ HELP
 
         // Get menu name
         $menuName = $input->getArgument('name');
-        if (! $menuName) {
+        if (!$menuName) {
             $question = new Question('Menu name (e.g., "File", "Edit", "My Menu"): ');
             $question->setValidator(function ($answer) {
                 if (empty(trim($answer))) {
@@ -108,7 +108,7 @@ HELP
 
         // Get menu type
         $menuType = $input->getOption('type');
-        if (! $menuType) {
+        if (!$menuType) {
             $types = $this->menuGenerator->getMenuTypes();
             $choices = [];
             foreach ($types as $type) {
@@ -122,7 +122,7 @@ HELP
         }
 
         // Validate menu type
-        if (! in_array($menuType, $this->menuGenerator->getMenuTypes())) {
+        if (!in_array($menuType, $this->menuGenerator->getMenuTypes())) {
             $io->error("Invalid menu type: {$menuType}");
 
             return Command::FAILURE;
@@ -149,7 +149,7 @@ HELP
 
         // Find NativeAppServiceProvider
         $providerPath = $this->findNativeAppServiceProvider();
-        if (! $providerPath) {
+        if (!$providerPath) {
             $io->error('Could not find NativeAppServiceProvider. Make sure NativePHP is properly installed.');
 
             return Command::FAILURE;
@@ -169,7 +169,7 @@ HELP
                     false
                 );
 
-                if (! $io->askQuestion($question)) {
+                if (!$io->askQuestion($question)) {
                     $io->info('Menu generation cancelled.');
 
                     return Command::SUCCESS;
@@ -190,7 +190,7 @@ HELP
             $io->success("Menu code added to {$providerPath}");
 
             // Generate event listener if not skipped
-            if (! $skipListener && $menuType !== 'custom') {
+            if (!$skipListener && $menuType !== 'custom') {
                 $this->generateEventListener($io, $menuName, $menuType);
             }
 
@@ -269,7 +269,7 @@ HELP
         $io->section('Generating Event Listener');
 
         $className = $this->menuGenerator->getListenerClassName($menuName);
-        $listenerPath = getcwd()."/app/Listeners/{$className}.php";
+        $listenerPath = getcwd() . "/app/Listeners/{$className}.php";
 
         if (file_exists($listenerPath)) {
             $question = new ConfirmationQuestion(
@@ -277,7 +277,7 @@ HELP
                 false
             );
 
-            if (! $io->askQuestion($question)) {
+            if (!$io->askQuestion($question)) {
                 $io->info('Listener generation skipped.');
 
                 return;
@@ -285,8 +285,8 @@ HELP
         }
 
         // Create Listeners directory if it doesn't exist
-        $listenersDir = getcwd().'/app/Listeners';
-        if (! is_dir($listenersDir)) {
+        $listenersDir = getcwd() . '/app/Listeners';
+        if (!is_dir($listenersDir)) {
             mkdir($listenersDir, 0755, true);
         }
 
@@ -318,13 +318,13 @@ HELP
 
     protected function isInLaravelProject(): bool
     {
-        return file_exists(getcwd().'/artisan') && file_exists(getcwd().'/composer.json');
+        return file_exists(getcwd() . '/artisan') && file_exists(getcwd() . '/composer.json');
     }
 
     protected function isNativePHPInstalled(): bool
     {
         try {
-            $composer = new Composer(new Filesystem, getcwd());
+            $composer = new Composer(new Filesystem(), getcwd());
 
             return $composer->packageExistsInComposerFile('nativephp/desktop')
                 || $composer->packageExistsInComposerFile('nativephp/mobile');
@@ -335,7 +335,7 @@ HELP
 
     protected function findNativeAppServiceProvider(): ?string
     {
-        $path = getcwd().'/app/Providers/NativeAppServiceProvider.php';
+        $path = getcwd() . '/app/Providers/NativeAppServiceProvider.php';
 
         return file_exists($path) ? $path : null;
     }
