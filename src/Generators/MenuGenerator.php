@@ -93,7 +93,7 @@ class MenuGenerator
     {
         $indent = $isMenuBar ? '            ' : '        ';
         $code = "\n{$indent}Menu::new()\n";
-        $code .= "{$indent}    ->label(".$this->escapeString($label).")\n";
+        $code .= "{$indent}    ->label(" . $this->escapeString($label) . ")\n";
 
         foreach ($items as $item) {
             if (isset($item['separator']) && $item['separator']) {
@@ -103,14 +103,14 @@ class MenuGenerator
                 $action = $item['action'] ?? '';
                 $shortcut = $item['shortcut'] ?? null;
 
-                $code .= "{$indent}    ->item(".$this->escapeString($label);
+                $code .= "{$indent}    ->item(" . $this->escapeString($label);
 
                 if ($action) {
-                    $code .= ', '.$this->escapeString($action);
+                    $code .= ', ' . $this->escapeString($action);
                 }
 
                 if ($shortcut) {
-                    $code .= ', '.$this->escapeString($shortcut);
+                    $code .= ', ' . $this->escapeString($shortcut);
                 }
 
                 $code .= ")\n";
@@ -124,7 +124,7 @@ class MenuGenerator
 
     protected function escapeString(string $string): string
     {
-        return "'".addslashes($string)."'";
+        return "'" . addslashes($string) . "'";
     }
 
     public function generateEventListenerCode(string $action, string $className): string

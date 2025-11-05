@@ -10,7 +10,7 @@ class CodeModifier
 
     public function __construct(string $filePath)
     {
-        if (! file_exists($filePath)) {
+        if (!file_exists($filePath)) {
             throw new \InvalidArgumentException("File not found: {$filePath}");
         }
 
@@ -20,21 +20,21 @@ class CodeModifier
 
     public function backup(): void
     {
-        $backupPath = $this->filePath.'.backup';
+        $backupPath = $this->filePath . '.backup';
         file_put_contents($backupPath, $this->content);
     }
 
     public function hasMethod(string $methodName): bool
     {
-        return preg_match('/public\s+function\s+'.preg_quote($methodName, '/').'\s*\(/', $this->content) === 1;
+        return preg_match('/public\s+function\s+' . preg_quote($methodName, '/') . '\s*\(/', $this->content) === 1;
     }
 
     public function hasUseStatement(string $class): bool
     {
         $className = $this->extractClassName($class);
 
-        return preg_match('/use\s+'.preg_quote($class, '/').'\s*;/', $this->content) === 1
-            || preg_match('/use\s+[^;]+\\\\'.preg_quote($className, '/').'\s*;/', $this->content) === 1;
+        return preg_match('/use\s+' . preg_quote($class, '/') . '\s*;/', $this->content) === 1
+            || preg_match('/use\s+[^;]+\\\\' . preg_quote($className, '/') . '\s*;/', $this->content) === 1;
     }
 
     public function addUseStatement(string $class): void
@@ -103,14 +103,14 @@ class CodeModifier
 
     public function insertIntoMethod(string $methodName, string $code, string $position = 'end'): void
     {
-        if (! $this->hasMethod($methodName)) {
+        if (!$this->hasMethod($methodName)) {
             throw new \RuntimeException("Method {$methodName} not found in file");
         }
 
         // Find the method
-        $pattern = '/(public\s+function\s+'.preg_quote($methodName, '/').'\s*\([^)]*\)[^{]*{)/';
+        $pattern = '/(public\s+function\s+' . preg_quote($methodName, '/') . '\s*\([^)]*\)[^{]*{)/';
 
-        if (! preg_match($pattern, $this->content, $matches, PREG_OFFSET_CAPTURE)) {
+        if (!preg_match($pattern, $this->content, $matches, PREG_OFFSET_CAPTURE)) {
             throw new \RuntimeException("Could not parse method {$methodName}");
         }
 
@@ -135,11 +135,11 @@ class CodeModifier
         if ($position === 'start') {
             // Insert at the beginning of the method
             $insertPosition = $methodStart;
-            $codeToInsert = "\n".$code;
+            $codeToInsert = "\n" . $code;
         } else {
             // Insert at the end of the method (before closing brace)
             $insertPosition = $methodEnd;
-            $codeToInsert = "\n".$code;
+            $codeToInsert = "\n" . $code;
         }
 
         $this->content = substr_replace($this->content, $codeToInsert, $insertPosition, 0);
@@ -147,9 +147,9 @@ class CodeModifier
 
     public function methodContains(string $methodName, string $searchString): bool
     {
-        $pattern = '/(public\s+function\s+'.preg_quote($methodName, '/').'\s*\([^)]*\)[^{]*{)/';
+        $pattern = '/(public\s+function\s+' . preg_quote($methodName, '/') . '\s*\([^)]*\)[^{]*{)/';
 
-        if (! preg_match($pattern, $this->content, $matches, PREG_OFFSET_CAPTURE)) {
+        if (!preg_match($pattern, $this->content, $matches, PREG_OFFSET_CAPTURE)) {
             return false;
         }
 
@@ -213,7 +213,7 @@ class CodeModifier
 
         foreach ($lines as $line) {
             if (trim($line) !== '') {
-                $indentedLines[] = $indent.$line;
+                $indentedLines[] = $indent . $line;
             } else {
                 $indentedLines[] = $line;
             }
