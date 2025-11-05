@@ -16,7 +16,8 @@
         "laravel/helpers": "^1.7",
         "phpstan/phpstan": "^2.1",
         "laravel/pint": "^1.25",
-        "mockery/mockery": "^1.6"
+        "mockery/mockery": "^1.6",
+        "symfony/filesystem": "^7.2"
     },
     "bin": [
         "bin/nativecli"
