@@ -13,7 +13,7 @@ test('jump command is registered', function () {
 });
 
 test('jump command builds args', function () {
-    $command = new class extends JumpCommand {
+    $command = new class () extends JumpCommand {
         public function exposeArgs(string $php): array
         {
             return $this->buildJumpCommand($php);
