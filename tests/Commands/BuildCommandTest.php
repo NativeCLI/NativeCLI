@@ -13,7 +13,7 @@ test('build command is registered', function () {
 });
 
 test('build command validates build option', function () {
-    $command = new class extends BuildCommand {
+    $command = new class () extends BuildCommand {
         public function exposeNormalize(string $build): ?string
         {
             return $this->normalizeBuildOption($build);
@@ -27,7 +27,7 @@ test('build command validates build option', function () {
 });
 
 test('build command builds native run args', function () {
-    $command = new class extends BuildCommand {
+    $command = new class () extends BuildCommand {
         public function exposeArgs(string $php, string $build): array
         {
             return $this->buildNativeRunCommand($php, $build);
