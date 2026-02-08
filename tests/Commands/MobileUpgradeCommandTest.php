@@ -13,7 +13,7 @@ test('mobile upgrade command is registered', function () {
 });
 
 test('mobile upgrade builds install args', function () {
-    $command = new class extends MobileUpgradeCommand {
+    $command = new class () extends MobileUpgradeCommand {
         public function exposeInstall(string $php, bool $force): array
         {
             return $this->buildInstallCommand($php, $force);
@@ -27,7 +27,7 @@ test('mobile upgrade builds install args', function () {
 });
 
 test('mobile upgrade builds plugin list args', function () {
-    $command = new class extends MobileUpgradeCommand {
+    $command = new class () extends MobileUpgradeCommand {
         public function exposeList(string $php): array
         {
             return $this->buildPluginListCommand($php);
