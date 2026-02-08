@@ -233,5 +233,4 @@ class NewCommand extends Command
             $this->output->writeln("<error>Failed to write NATIVEPHP_APP_ID to $filePath.</error>");
         }
     }
-
 }

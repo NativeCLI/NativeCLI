@@ -105,7 +105,7 @@ test('can check if package exists in composer file', function () {
 });
 
 test('composer processes disable timeouts', function () {
-    $composer = new class(new Illuminate\Filesystem\Filesystem()) extends NativeCLI\Composer {
+    $composer = new class (new Illuminate\Filesystem\Filesystem()) extends NativeCLI\Composer {
         public function exposeProcess(): Symfony\Component\Process\Process
         {
             return $this->getProcess(['echo', 'hi']);
