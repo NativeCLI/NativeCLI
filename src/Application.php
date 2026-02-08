@@ -9,6 +9,7 @@ use NativeCLI\Command\ConfigurationCommand;
 use NativeCLI\Command\InstallNativePHPMobileCommand;
 use NativeCLI\Command\JumpCommand;
 use NativeCLI\Command\LogsCommand;
+use NativeCLI\Command\MobileUpgradeCommand;
 use NativeCLI\Command\NewCommand;
 use NativeCLI\Command\PluginAddCommand;
 use NativeCLI\Command\PluginListCommand;
@@ -110,6 +111,7 @@ final class Application extends \Symfony\Component\Console\Application
             new InstallNativePHPMobileCommand(),
             new JumpCommand(),
             new LogsCommand(),
+            new MobileUpgradeCommand(),
             new NewCommand(),
             new PluginAddCommand(),
             new PluginListCommand(),
