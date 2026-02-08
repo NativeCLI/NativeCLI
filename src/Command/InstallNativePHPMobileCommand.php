@@ -6,11 +6,12 @@ use Illuminate\Filesystem\Filesystem;
 use JsonException;
 use NativeCLI\Composer;
 use NativeCLI\Services\RepositoryManager;
+use NativeCLI\Support\ProcessFactory;
+use Symfony\Component\Process\Process;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\Process;
 
 #[AsCommand(
     name: 'mobile:install',
@@ -40,12 +41,12 @@ class InstallNativePHPMobileCommand extends Command
             return Command::FAILURE;
         }
 
-        $php = trim(Process::fromShellCommandline('which php')->mustRun()->getOutput());
+        $php = trim(ProcessFactory::shell('which php', false)->mustRun()->getOutput());
 
         $output->writeln('Installing NativePHP for Mobile...');
 
-        $nativePhpInstall = new Process([$php, 'artisan', 'native:install', '--no-interaction']);
-        $nativePhpInstall->setTty(Process::isTtySupported())
+        $nativePhpInstall = ProcessFactory::make([$php, 'artisan', 'native:install', '--no-interaction']);
+        $nativePhpInstall
             ->mustRun(function ($type, $buffer) use ($output) {
                 $output->write($buffer);
             });

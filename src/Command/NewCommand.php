@@ -6,13 +6,14 @@ use Illuminate\Filesystem\Filesystem;
 use NativeCLI\Composer;
 use NativeCLI\Exception\CommandFailed;
 use NativeCLI\Services\RepositoryManager;
+use NativeCLI\Support\ProcessFactory;
+use Symfony\Component\Process\Process;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\Process;
 use Throwable;
 
 use function Laravel\Prompts\confirm;
@@ -71,9 +72,8 @@ class NewCommand extends Command
         try {
             $output->writeln('Creating a new NativePHP project...');
 
-            $process = new Process(['laravel', 'new', ...$tokens]);
-            $process->setTimeout(null)
-                ->setTty(Process::isTtySupported())
+            $process = ProcessFactory::make(['laravel', 'new', ...$tokens]);
+            $process
                 ->mustRun(function ($type, $buffer) {
                     $this->output->write($buffer);
                 });
@@ -103,12 +103,11 @@ class NewCommand extends Command
             }
 
             // Locate PHP & remove new lines
-            $php = trim(Process::fromShellCommandline('which php')->mustRun()->getOutput());
+            $php = trim(ProcessFactory::shell('which php', false)->mustRun()->getOutput());
 
             // Install NativePHP
-            $nativePhpInstall = new Process([$php, 'artisan', 'native:install', '--no-interaction']);
-            $nativePhpInstall->setTimeout(null)
-                ->setTty(Process::isTtySupported())
+            $nativePhpInstall = ProcessFactory::make([$php, 'artisan', 'native:install', '--no-interaction']);
+            $nativePhpInstall
                 ->mustRun(function ($type, $buffer) {
                     $this->output->write($buffer);
                 });
@@ -131,9 +130,8 @@ class NewCommand extends Command
             )) {
                 $output->writeln('<info>Starting your NativePHP application...</info>');
 
-                $startProcess = new Process([$php, 'artisan', 'native:run']);
-                $startProcess->setTimeout(null)
-                    ->setTty(Process::isTtySupported())
+                $startProcess = ProcessFactory::make([$php, 'artisan', 'native:run']);
+                $startProcess
                     ->mustRun(function ($type, $buffer) {
                         $this->output->write($buffer);
                     });
@@ -156,7 +154,7 @@ class NewCommand extends Command
      */
     protected function defaultBranch(): string
     {
-        $process = new Process(['git', 'config', '--global', 'init.defaultBranch']);
+        $process = ProcessFactory::make(['git', 'config', '--global', 'init.defaultBranch'], false);
 
         $process->run();
 

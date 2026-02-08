@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
+use NativeCLI\Support\ProcessFactory;
 use Throwable;
 use z4kn4fein\SemVer\Version as SemanticVersion;
 
@@ -16,7 +17,7 @@ class Composer extends \Illuminate\Support\Composer
     public function findGlobalComposerHomeDirectory(): string
     {
         $globalDirectory = null;
-        $process = new Process(['composer', '-n', 'config', '--global', 'home']);
+        $process = ProcessFactory::make(['composer', '-n', 'config', '--global', 'home']);
         // Get response from process to variable
         $process->run(function ($type, $line) use (&$globalDirectory) {
             if ($type === Process::ERR) {
@@ -122,5 +123,10 @@ class Composer extends \Illuminate\Support\Composer
                         $output->write('    ' . $line);
                     } : $output
             ) === 0;
+    }
+
+    protected function getProcess(array $command, array $env = []): Process
+    {
+        return ProcessFactory::make($command, false, $this->workingPath, $env);
     }
 }
