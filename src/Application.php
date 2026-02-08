@@ -8,6 +8,11 @@ use NativeCLI\Command\ConfigurationCommand;
 use NativeCLI\Command\InstallNativePHPMobileCommand;
 use NativeCLI\Command\LogsCommand;
 use NativeCLI\Command\NewCommand;
+use NativeCLI\Command\PluginAddCommand;
+use NativeCLI\Command\PluginListCommand;
+use NativeCLI\Command\PluginPermissionsCommand;
+use NativeCLI\Command\PluginProviderCommand;
+use NativeCLI\Command\PluginRemoveCommand;
 use NativeCLI\Command\SelfUpdateCommand;
 use NativeCLI\Command\UpdateNativePHPCommand;
 use NativeCLI\Support\ProcessFactory;
@@ -102,6 +107,11 @@ final class Application extends \Symfony\Component\Console\Application
             new InstallNativePHPMobileCommand(),
             new LogsCommand(),
             new NewCommand(),
+            new PluginAddCommand(),
+            new PluginListCommand(),
+            new PluginPermissionsCommand(),
+            new PluginProviderCommand(),
+            new PluginRemoveCommand(),
             new SelfUpdateCommand(),
             new UpdateNativePHPCommand(),
         ];
