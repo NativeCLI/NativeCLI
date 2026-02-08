@@ -17,7 +17,7 @@ test('plugin commands are registered', function () {
 });
 
 test('plugin add command builds register args', function () {
-    $command = new class extends PluginAddCommand {
+    $command = new class () extends PluginAddCommand {
         public function exposeRegister(string $php, string $package, bool $force): array
         {
             return $this->buildPluginRegisterCommand($php, $package, $force);
@@ -31,7 +31,7 @@ test('plugin add command builds register args', function () {
 });
 
 test('plugin list command builds args', function () {
-    $command = new class extends PluginListCommand {
+    $command = new class () extends PluginListCommand {
         public function exposeList(string $php, bool $json, bool $all): array
         {
             return $this->buildPluginListCommand($php, $json, $all);
@@ -45,7 +45,7 @@ test('plugin list command builds args', function () {
 });
 
 test('plugin remove command builds args', function () {
-    $command = new class extends PluginRemoveCommand {
+    $command = new class () extends PluginRemoveCommand {
         public function exposeRemove(string $php, string $package, bool $force, bool $keep): array
         {
             return $this->buildPluginUninstallCommand($php, $package, $force, $keep);
@@ -59,7 +59,7 @@ test('plugin remove command builds args', function () {
 });
 
 test('plugin permissions extracts permissions from payload', function () {
-    $command = new class extends PluginPermissionsCommand {
+    $command = new class () extends PluginPermissionsCommand {
         public function exposeNormalize(array $payload): array
         {
             return $this->normalizePluginPayload($payload);
