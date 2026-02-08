@@ -10,13 +10,13 @@ use NativeCLI\Command\LogsCommand;
 use NativeCLI\Command\NewCommand;
 use NativeCLI\Command\SelfUpdateCommand;
 use NativeCLI\Command\UpdateNativePHPCommand;
+use NativeCLI\Support\ProcessFactory;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\Process;
 use Throwable;
 
 final class Application extends \Symfony\Component\Console\Application
@@ -71,7 +71,7 @@ final class Application extends \Symfony\Component\Console\Application
 
                             // To appease the QA/CI Bots, lets ensure that we have an ArgvInput
                             if ($input instanceof ArgvInput) {
-                                Process::fromShellCommandline($this->filePath . ' ' . implode(' ', $input->getRawTokens()))
+                                ProcessFactory::shell($this->filePath . ' ' . implode(' ', $input->getRawTokens()), false)
                                     ->run(function ($type, $buffer) use ($output) {
                                         $output->write($buffer);
                                     });

@@ -103,3 +103,17 @@ test('can check if package exists in composer file', function () {
     expect($composer->packageExistsInComposerFile('guzzlehttp/guzzle'))->toBeTrue()
         ->and($composer->packageExistsInComposerFile('nonexistent/package'))->toBeFalse();
 });
+
+test('composer processes disable timeouts', function () {
+    $composer = new class(new Illuminate\Filesystem\Filesystem()) extends NativeCLI\Composer {
+        public function exposeProcess(): Symfony\Component\Process\Process
+        {
+            return $this->getProcess(['echo', 'hi']);
+        }
+    };
+
+    $process = $composer->exposeProcess();
+
+    expect($process->getTimeout())->toBeNull()
+        ->and($process->getIdleTimeout())->toBeNull();
+});
