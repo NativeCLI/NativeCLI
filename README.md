@@ -57,7 +57,7 @@ We welcome sponsorships which help us to continue providine Free & Open-Source s
 
 ### With thanks to our current sponsors...
 
-- [Simon Hamp](https://github.com/simonhamp) - Co-Creator of [NativePHP](https://github.com/NativePHP) 
+- Be the first!
 
 
 ## License
