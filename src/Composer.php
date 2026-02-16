@@ -66,8 +66,7 @@ class Composer extends \Illuminate\Support\Composer
 
     private function composerHomeFromDefaultLocations(): ?string
     {
-        $home = getenv('HOME') ?: null;
-        $homePath = $home === false ? null : $home;
+        $homePath = getenv('HOME') ?: null;
         $xdgConfigHome = getenv('XDG_CONFIG_HOME') ?: null;
         $appData = getenv('APPDATA') ?: null;
         $candidates = [
