@@ -38,7 +38,7 @@ use Symfony\\Component\\Console\\Output\\OutputInterface;
 };
 
 \$app = Application::create(__FILE__);
-\$app->add(\$command);
+\$app->addCommand(\$command);
 \$app->setAutoExit(false);
 exit(\$app->run());
 PHP;

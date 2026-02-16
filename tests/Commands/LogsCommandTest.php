@@ -40,7 +40,7 @@ test('logs command fails when not in Laravel project', function () {
     chdir(TESTS_TEMP_DIR);
 
     $application = new Application();
-    $application->add(new LogsCommand());
+    $application->addCommand(new LogsCommand());
 
     $command = $application->find('logs');
     $commandTester = new CommandTester($command);
@@ -53,7 +53,7 @@ test('logs command fails when not in Laravel project', function () {
 
 test('logs command displays error when no log files found', function () {
     $application = new Application();
-    $application->add(new LogsCommand());
+    $application->addCommand(new LogsCommand());
 
     $command = $application->find('logs');
     $commandTester = new CommandTester($command);
@@ -75,7 +75,7 @@ LOG;
     file_put_contents($logFile, $logContent);
 
     $application = new Application();
-    $application->add(new LogsCommand());
+    $application->addCommand(new LogsCommand());
 
     $command = $application->find('logs');
     $commandTester = new CommandTester($command);
@@ -97,7 +97,7 @@ test('logs command respects lines option', function () {
     file_put_contents($logFile, $logContent);
 
     $application = new Application();
-    $application->add(new LogsCommand());
+    $application->addCommand(new LogsCommand());
 
     $command = $application->find('logs');
     $commandTester = new CommandTester($command);
@@ -125,7 +125,7 @@ LOG;
     file_put_contents($logFile, $logContent);
 
     $application = new Application();
-    $application->add(new LogsCommand());
+    $application->addCommand(new LogsCommand());
 
     $command = $application->find('logs');
     $commandTester = new CommandTester($command);
@@ -146,7 +146,7 @@ test('logs command runs successfully in verbose mode', function () {
     file_put_contents($logFile, '[2025-01-15 10:00:00] local.INFO: Test message');
 
     $application = new Application();
-    $application->add(new LogsCommand());
+    $application->addCommand(new LogsCommand());
 
     $command = $application->find('logs');
     $commandTester = new CommandTester($command);
@@ -163,7 +163,7 @@ test('logs command displays message when no matching logs', function () {
     file_put_contents($logFile, '[2025-01-15 10:00:00] local.INFO: Info message');
 
     $application = new Application();
-    $application->add(new LogsCommand());
+    $application->addCommand(new LogsCommand());
 
     $command = $application->find('logs');
     $commandTester = new CommandTester($command);
@@ -184,7 +184,7 @@ LOG;
     file_put_contents($logFile, $logContent);
 
     $application = new Application();
-    $application->add(new LogsCommand());
+    $application->addCommand(new LogsCommand());
 
     $command = $application->find('logs');
     $commandTester = new CommandTester($command);
@@ -205,7 +205,7 @@ test('logs command detects app ID from env file', function () {
     file_put_contents($logFile, '[2025-01-15 10:00:00] local.INFO: Test');
 
     $application = new Application();
-    $application->add(new LogsCommand());
+    $application->addCommand(new LogsCommand());
 
     $command = $application->find('logs');
     $commandTester = new CommandTester($command);
@@ -223,7 +223,7 @@ test('logs command handles missing env file gracefully', function () {
     file_put_contents($logFile, '[2025-01-15 10:00:00] local.INFO: Test');
 
     $application = new Application();
-    $application->add(new LogsCommand());
+    $application->addCommand(new LogsCommand());
 
     $command = $application->find('logs');
     $commandTester = new CommandTester($command);
@@ -239,7 +239,7 @@ test('logs command supports platform option', function () {
     file_put_contents($logFile, '[2025-01-15 10:00:00] local.INFO: Test');
 
     $application = new Application();
-    $application->add(new LogsCommand());
+    $application->addCommand(new LogsCommand());
 
     $command = $application->find('logs');
     $commandTester = new CommandTester($command);
@@ -259,7 +259,7 @@ LOG;
     file_put_contents($logFile, $logContent);
 
     $application = new Application();
-    $application->add(new LogsCommand());
+    $application->addCommand(new LogsCommand());
 
     $command = $application->find('logs');
     $commandTester = new CommandTester($command);
