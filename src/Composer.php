@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 use NativeCLI\Support\ProcessFactory;
 use Throwable;
@@ -16,8 +17,14 @@ class Composer extends \Illuminate\Support\Composer
 {
     public function findGlobalComposerHomeDirectory(): string
     {
+        $composer = (new ExecutableFinder())->find('composer');
+
+        if ($composer === null || $composer === false) {
+            throw new RuntimeException('Unable to locate the composer executable.');
+        }
+
         $globalDirectory = null;
-        $process = ProcessFactory::make(['composer', '-n', 'config', '--global', 'home']);
+        $process = ProcessFactory::make([$composer, '-n', 'config', '--global', 'home']);
         // Get response from process to variable
         $process->run(function ($type, $line) use (&$globalDirectory) {
             if ($type === Process::ERR) {
