@@ -19,7 +19,7 @@ class Composer extends \Illuminate\Support\Composer
     {
         $composer = (new ExecutableFinder())->find('composer');
 
-        if ($composer === null || $composer === false) {
+        if (is_null($composer)) {
             throw new RuntimeException('Unable to locate the composer executable.');
         }
 
