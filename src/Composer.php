@@ -17,28 +17,92 @@ class Composer extends \Illuminate\Support\Composer
 {
     public function findGlobalComposerHomeDirectory(): string
     {
+        $candidates = [
+            $this->composerHomeFromEnvironment(),
+            $this->composerHomeFromCommand(),
+            $this->composerHomeFromDefaultLocations(),
+        ];
+
+        foreach ($candidates as $candidate) {
+            if ($candidate !== null && is_dir($candidate)) {
+                return $candidate;
+            }
+        }
+
+        throw new RuntimeException('Unable to determine global composer home directory.');
+    }
+
+    private function composerHomeFromEnvironment(): ?string
+    {
+        $composerHome = getenv('COMPOSER_HOME');
+
+        if ($composerHome === false || trim($composerHome) === '') {
+            return null;
+        }
+
+        return rtrim(trim($composerHome), DIRECTORY_SEPARATOR);
+    }
+
+    private function composerHomeFromCommand(): ?string
+    {
         $composer = (new ExecutableFinder())->find('composer');
 
-        if (is_null($composer)) {
-            throw new RuntimeException('Unable to locate the composer executable.');
+        if ($composer === null) {
+            return null;
         }
 
-        $globalDirectory = null;
-        $process = ProcessFactory::make([$composer, '-n', 'config', '--global', 'home']);
-        // Get response from process to variable
-        $process->run(function ($type, $line) use (&$globalDirectory) {
-            if ($type === Process::ERR) {
-                return;
-            }
+        $process = ProcessFactory::make([$composer, '-n', 'config', '--global', 'home'], tty: false);
+        $process->run();
 
-            $globalDirectory = trim($line);
-        });
+        $globalDirectory = $this->extractPathFromOutput($process->getOutput())
+            ?? $this->extractPathFromOutput($process->getErrorOutput());
 
         if ($globalDirectory === null) {
-            throw new RuntimeException('Unable to determine global composer home directory.');
+            return null;
         }
 
-        return rtrim($globalDirectory, "\n");
+        return rtrim($globalDirectory, DIRECTORY_SEPARATOR);
+    }
+
+    private function composerHomeFromDefaultLocations(): ?string
+    {
+        $home = getenv('HOME') ?: null;
+        $homePath = $home === false ? null : $home;
+        $xdgConfigHome = getenv('XDG_CONFIG_HOME') ?: null;
+        $appData = getenv('APPDATA') ?: null;
+        $candidates = [
+            $xdgConfigHome ? $xdgConfigHome . DIRECTORY_SEPARATOR . 'composer' : null,
+            $homePath ? $homePath . DIRECTORY_SEPARATOR . '.config' . DIRECTORY_SEPARATOR . 'composer' : null,
+            $homePath ? $homePath . DIRECTORY_SEPARATOR . '.composer' : null,
+            $appData ? $appData . DIRECTORY_SEPARATOR . 'Composer' : null,
+        ];
+
+        foreach ($candidates as $candidate) {
+            if ($candidate !== null && is_dir($candidate)) {
+                return rtrim($candidate, DIRECTORY_SEPARATOR);
+            }
+        }
+
+        return null;
+    }
+
+    private function extractPathFromOutput(string $output): ?string
+    {
+        $lines = preg_split('/\r\n|\r|\n/', $output) ?: [];
+
+        foreach (array_reverse($lines) as $line) {
+            $candidate = trim($line, " \t\n\r\0\x0B\"'");
+
+            if ($candidate === '') {
+                continue;
+            }
+
+            if (is_dir($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return null;
     }
 
     public function findGlobalComposerFile(string $file = 'composer.json'): ?string
