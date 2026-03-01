@@ -5,6 +5,7 @@ namespace NativeCLI\Command;
 use Illuminate\Filesystem\Filesystem;
 use NativeCLI\Composer;
 use NativeCLI\Exception\CommandFailed;
+use NativeCLI\Services\MobileInstaller;
 use NativeCLI\Support\ProcessFactory;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -87,25 +88,28 @@ class NewCommand extends Command
             chdir($input->getArgument('name'));
 
             $composer = new Composer(new Filesystem(), $filePath);
+            $mobileInstaller = new MobileInstaller();
+            $mobileInstall = (bool) $input->getOption('mobile');
+            $jumpToProject = (bool) $input->getOption('jump');
 
-            if (!$input->getOption('mobile')) {
+            if (!$mobileInstall) {
                 $composer->requirePackages(
                     packages: ['nativephp/desktop'],
                     output: $output,
                     tty: Process::isTtySupported()
                 );
             } else {
-                $composer->requirePackages(
-                    packages: ['nativephp/mobile'],
+                $mobileInstaller->install(
                     output: $output,
-                    tty: Process::isTtySupported()
+                    workingPath: $filePath,
+                    runNativeInstall: !$jumpToProject
                 );
             }
 
             // Locate PHP & remove new lines
             $php = trim(ProcessFactory::shell('which php', false)->mustRun()->getOutput());
 
-            if ($input->getOption('jump')) {
+            if ($jumpToProject) {
                 $output->writeln('<info>Jumping into your NativePHP application...</info>');
 
                 $jumpProcess = ProcessFactory::make([$php, 'artisan', 'native:jump']);
@@ -114,18 +118,20 @@ class NewCommand extends Command
                         $this->output->write($buffer);
                     });
             } else {
-                // Install NativePHP
-                $nativePhpInstall = ProcessFactory::make([$php, 'artisan', 'native:install', '--no-interaction']);
-                $nativePhpInstall
-                    ->mustRun(function ($type, $buffer) {
-                        $this->output->write($buffer);
-                    });
+                if (!$mobileInstall) {
+                    // Install NativePHP
+                    $nativePhpInstall = ProcessFactory::make([$php, 'artisan', 'native:install', '--no-interaction']);
+                    $nativePhpInstall
+                        ->mustRun(function ($type, $buffer) {
+                            $this->output->write($buffer);
+                        });
 
-                if (!$nativePhpInstall->isSuccessful()) {
-                    throw new CommandFailed('NativePHP installation failed.');
+                    if (!$nativePhpInstall->isSuccessful()) {
+                        throw new CommandFailed('NativePHP installation failed.');
+                    }
                 }
 
-                if ($input->getOption('mobile')) {
+                if ($mobileInstall) {
                     $this->populateMobileEnv(
                         rtrim($filePath, '/') . '/.env',
                     );

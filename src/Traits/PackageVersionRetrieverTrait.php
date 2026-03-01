@@ -26,12 +26,30 @@ trait PackageVersionRetrieverTrait
             $package
         );
 
-        $response = self::makeRequest($url);
+        $request = self::makeRequest($url);
+        $response = $request['body'];
+        $status = $request['status'];
+        $curlError = $request['curl_error'];
+
+        if ($response === '') {
+            throw new Exception(sprintf(
+                'Empty response while retrieving latest version from [%s] (status: %d, curl_error: %s).',
+                $url,
+                $status,
+                $curlError !== '' ? $curlError : 'none'
+            ));
+        }
 
         $data = json_decode($response, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new Exception('Failed to decode latest version');
+            throw new Exception(sprintf(
+                'Failed to decode latest version from [%s] (status: %d, curl_error: %s, response: %s).',
+                $url,
+                $status,
+                $curlError !== '' ? $curlError : 'none',
+                substr($response, 0, 500)
+            ));
         }
 
         if (empty($data['tag_name'])) {
@@ -76,12 +94,30 @@ trait PackageVersionRetrieverTrait
             $package
         );
 
-        $response = self::makeRequest($url);
+        $request = self::makeRequest($url);
+        $response = $request['body'];
+        $status = $request['status'];
+        $curlError = $request['curl_error'];
+
+        if ($response === '') {
+            throw new Exception(sprintf(
+                'Empty response while retrieving available versions from [%s] (status: %d, curl_error: %s).',
+                $url,
+                $status,
+                $curlError !== '' ? $curlError : 'none'
+            ));
+        }
 
         $data = json_decode($response, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new Exception('Failed to decode latest version');
+            throw new Exception(sprintf(
+                'Failed to decode available versions from [%s] (status: %d, curl_error: %s, response: %s).',
+                $url,
+                $status,
+                $curlError !== '' ? $curlError : 'none',
+                substr($response, 0, 500)
+            ));
         }
 
         $cache->addToCache($cacheKey, $package, array_column($data, 'tag_name'));
@@ -94,10 +130,18 @@ trait PackageVersionRetrieverTrait
             ->sort($sort);
     }
 
-    private static function makeRequest(string $url, array $headers = []): ?string
+    /**
+     * @return array{body: string, status: int, curl_error: string}
+     * @throws Exception
+     */
+    private static function makeRequest(string $url, array $headers = []): array
     {
         $headers = collect($headers);
         $ch = curl_init();
+
+        if ($ch === false) {
+            throw new Exception(sprintf('Failed to initialize cURL request for [%s].', $url));
+        }
 
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -121,14 +165,27 @@ trait PackageVersionRetrieverTrait
         );
 
         $response = curl_exec($ch);
+        $status = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($ch);
 
         if ($response === false || !is_string($response)) {
-            return null;
+            curl_close($ch);
+
+            throw new Exception(sprintf(
+                'HTTP request failed for [%s] (status: %d, curl_error: %s).',
+                $url,
+                $status,
+                $curlError !== '' ? $curlError : 'none'
+            ));
         }
 
         curl_close($ch);
 
-        return $response;
+        return [
+            'body' => $response,
+            'status' => $status,
+            'curl_error' => $curlError,
+        ];
     }
 
     private static function checkCache(string $package)

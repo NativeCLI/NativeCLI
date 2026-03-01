@@ -10,3 +10,10 @@ test('new command is registered', function () {
     expect($command)->not->toBeNull()
         ->and($command->getName())->toBe('new');
 });
+
+test('new command delegates mobile installation to mobile installer service', function () {
+    $commandSource = file_get_contents(__DIR__ . '/../../src/Command/NewCommand.php');
+
+    expect($commandSource)->toContain('MobileInstaller')
+        ->and($commandSource)->not->toMatch('/requirePackages\\s*\\([^)]*[\'"]nativephp\\/mobile[\'"][^)]*\\)/');
+});
