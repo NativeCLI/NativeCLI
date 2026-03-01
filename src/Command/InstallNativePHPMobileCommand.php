@@ -2,7 +2,6 @@
 
 namespace NativeCLI\Command;
 
-use NativeCLI\Exception\CommandFailed;
 use NativeCLI\Services\MobileInstaller;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -20,10 +19,6 @@ class InstallNativePHPMobileCommand extends Command
     {
         try {
             (new MobileInstaller())->install($output, getcwd());
-        } catch (CommandFailed $e) {
-            $output->writeln('<error>' . $e->getMessage() . '</error>');
-
-            return Command::FAILURE;
         } catch (Throwable $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
 

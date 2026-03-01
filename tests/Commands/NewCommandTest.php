@@ -15,5 +15,5 @@ test('new command delegates mobile installation to mobile installer service', fu
     $commandSource = file_get_contents(__DIR__ . '/../../src/Command/NewCommand.php');
 
     expect($commandSource)->toContain('MobileInstaller')
-        ->and($commandSource)->not->toContain("packages: ['nativephp/mobile']");
+        ->and($commandSource)->not->toMatch('/requirePackages\\s*\\([^)]*[\'"]nativephp\\/mobile[\'"][^)]*\\)/');
 });
